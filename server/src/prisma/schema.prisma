@@ -1,0 +1,55 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Item {
+  id          Int          @id @default(autoincrement())
+  name        String
+  price       Int
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  /// @onDelete(CASCADE)
+  saleDetails SaleDetail[]
+
+  @@map("items")
+}
+
+model Sale {
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  /// @onDelete(CASCADE)
+  saleDetails SaleDetail[]
+
+  @@map("sales")
+}
+
+model SaleDetail {
+  id        Int      @id @default(autoincrement())
+  amount    Int
+  unitPrice Int      @map("unit_price")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  item      Item     @relation(fields: [itemId], references: [id])
+  itemId    Int      @map("item_id")
+  sale      Sale     @relation(fields: [saleId], references: [id])
+  saleId    Int      @map("sale_id")
+
+  @@map("sale_details")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
