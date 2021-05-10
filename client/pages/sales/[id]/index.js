@@ -14,12 +14,12 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
+
 import DeleteAlert from "../../../components/DeleteAlert";
 import DetailOptions from "../../../components/DetailOptions";
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
-
 import { getLayout } from "../../../components/Layout";
 import Title from "../../../components/Title";
 import { useDeleteSale } from "../../../hooks/sales/useDeleteSale";
