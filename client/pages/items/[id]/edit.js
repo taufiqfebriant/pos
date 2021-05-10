@@ -67,7 +67,7 @@ const EditItem = () => {
     <>
       <Title title="Edit Barang" />
       <Header>
-        <HeaderBackButton href="/items" />
+        <HeaderBackButton href={`/items/${router.query.id}`} />
         <HeaderTitle>Edit Barang</HeaderTitle>
       </Header>
       <Box as="main" px="4" py="3">

@@ -75,7 +75,7 @@ export const getStaticProps = async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(
-    getItemsKey({ orderBy: { id: "desc" } }),
+    [getItemsKey, { orderBy: { id: "desc" } }],
     getItems
   );
 

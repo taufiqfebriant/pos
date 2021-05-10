@@ -10,16 +10,13 @@ const GET_LATEST_SALES = gql`
   }
 `;
 
-const getLatestSales = async ({ queryKey }) => {
-  const [, take, orderBy] = queryKey;
+const getLatestSalesKey = "latestSales";
 
-  const { sales } = await client.request(GET_LATEST_SALES, {
-    filter: {
-      take,
-      orderBy,
-    },
-  });
+const getLatestSales = async ({ queryKey }) => {
+  const [, filter] = queryKey;
+
+  const { sales } = await client.request(GET_LATEST_SALES, { filter });
   return sales;
 };
 
-export { getLatestSales };
+export { getLatestSales, getLatestSalesKey };

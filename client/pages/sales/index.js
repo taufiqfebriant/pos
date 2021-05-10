@@ -18,63 +18,61 @@ import NextLink from "next/link";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
+import Header from "../../components/Header";
+import HeaderTitle from "../../components/HeaderTitle";
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
-import { getSales, useSales } from "../../hooks/sales/useSales";
+import { getSales, getSalesKey, useSales } from "../../hooks/sales/useSales";
 
 const Sales = () => {
-  const { data } = useSales({ id: "desc" });
+  const { data } = useSales({ orderBy: { id: "desc" } });
 
   return (
     <>
       <Title title="Penjualan" />
-      <Flex align="center" justify="space-between">
-        <Heading size="lg">Penjualan</Heading>
+      <Header justify="space-between">
+        <HeaderTitle>Penjualan</HeaderTitle>
         <NextLink href="/sales/create" passHref>
           <Link _hover={{ textDecoration: "none" }}>
             <Button>Tambah Penjualan</Button>
           </Link>
         </NextLink>
-      </Flex>
-      <Box
-        border="1px"
-        borderColor="gray.100"
-        borderRadius="base"
-        mt="6"
-        overflow="hidden"
-      >
-        <Table variant="simple">
-          <Thead>
-            <Tr bg="gray.50">
-              <Th>No. Penjualan</Th>
-              <Th>Diperbarui pada</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.map(sale => (
-              <Tr key={sale.id} _hover={{ background: "teal.50" }}>
-                <Td p="0">
-                  <LinkBox py="4" px="6">
-                    <NextLink href={`/sales/${sale.id}`} passHref>
-                      <LinkOverlay>{sale.id}</LinkOverlay>
-                    </NextLink>
-                  </LinkBox>
-                </Td>
-                <Td p="0">
-                  <LinkBox py="4" px="6">
-                    <NextLink href={`/sales/${sale.id}`} passHref>
-                      <LinkOverlay>
-                        {dayjs(Number(sale.updatedAt)).format(
-                          "DD MMMM YYYY HH:mm:ss"
-                        )}
-                      </LinkOverlay>
-                    </NextLink>
-                  </LinkBox>
-                </Td>
+      </Header>
+      <Box as="main" px="4" py="3">
+        <Box borderWidth="thin">
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>No. Penjualan</Th>
+                <Th>Diperbarui pada</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
+            </Thead>
+            <Tbody>
+              {data.map(sale => (
+                <Tr key={sale.id} _hover={{ background: "teal.50" }}>
+                  <Td p="0">
+                    <LinkBox py="4" px="6">
+                      <NextLink href={`/sales/${sale.id}`} passHref>
+                        <LinkOverlay>{sale.id}</LinkOverlay>
+                      </NextLink>
+                    </LinkBox>
+                  </Td>
+                  <Td p="0">
+                    <LinkBox py="4" px="6">
+                      <NextLink href={`/sales/${sale.id}`} passHref>
+                        <LinkOverlay>
+                          {dayjs(Number(sale.updatedAt)).format(
+                            "DD MMMM YYYY HH:mm:ss"
+                          )}
+                        </LinkOverlay>
+                      </NextLink>
+                    </LinkBox>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
       </Box>
     </>
   );
@@ -83,7 +81,10 @@ const Sales = () => {
 export const getStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["sales", { id: "desc" }], getSales);
+  await queryClient.prefetchQuery(
+    getSalesKey({ orderBy: { id: "desc" } }),
+    getSales
+  );
 
   return {
     props: {

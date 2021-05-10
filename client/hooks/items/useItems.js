@@ -12,15 +12,19 @@ const GET_ITEMS = gql`
   }
 `;
 
-const getItemsKey = filter => ["items", filter];
+const getItemsKey = "items";
 
 const getItems = async ({ queryKey }) => {
-  const [, filter] = queryKey;
+  let filter;
+  if (Array.isArray(queryKey)) {
+    [, filter] = queryKey;
+  }
 
-  const { items } = await client.request(GET_ITEMS, { filter });
+  const { items } = await client.request(GET_ITEMS, filter && { filter });
   return items;
 };
 
-const useItems = filter => useQuery(getItemsKey(filter), getItems);
+const useItems = filter =>
+  useQuery(filter ? [getItemsKey, filter] : getItemsKey, getItems);
 
 export { getItemsKey, getItems, useItems };

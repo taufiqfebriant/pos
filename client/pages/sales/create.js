@@ -22,9 +22,12 @@ import { dehydrate } from "react-query/hydration";
 
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
-import { getItems, useItems } from "../../hooks/items/useItems";
+import { getItems, getItemsKey, useItems } from "../../hooks/items/useItems";
 import { schema } from "../../schema/saleDetails";
 import { useCreateSale } from "../../hooks/sales/useCreateSale";
+import Header from "../../components/Header";
+import HeaderBackButton from "../../components/HeaderBackButton";
+import HeaderTitle from "../../components/HeaderTitle";
 
 const CreateSale = () => {
   const router = useRouter();
@@ -63,81 +66,86 @@ const CreateSale = () => {
   return (
     <>
       <Title title="Tambah Penjualan" />
-      <Heading size="lg">Tambah Penjualan</Heading>
-      <Box as="form" mt="6" onSubmit={handleSubmit(onSubmit)}>
-        {fields.map((field, index) => (
-          <Fragment key={field.id}>
-            <FormControl
-              id={`saleDetails.${index}.itemId`}
-              d="flex"
-              isInvalid={errors.saleDetails?.[index].itemId}
-            >
-              <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
-                Barang
-              </FormLabel>
-              <Box w={5 / 6}>
-                <Select
-                  {...register(`saleDetails.${index}.itemId`)}
-                  defaultValue={field.itemId}
-                  variant="filled"
-                >
-                  <option value="" disabled></option>
-                  {data.map(item => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Select>
-                <FormErrorMessage>
-                  {errors.saleDetails?.[index].itemId?.message}
-                </FormErrorMessage>
-              </Box>
-            </FormControl>
-            <FormControl
-              id={`saleDetails.${index}.amount`}
-              isInvalid={errors.saleDetails?.[index].amount}
-              d="flex"
-              mt="4"
-            >
-              <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
-                Jumlah
-              </FormLabel>
-              <Box w={5 / 6}>
-                <Controller
-                  defaultValue={field.amount}
-                  control={control}
-                  name={`saleDetails.${index}.amount`}
-                  render={({
-                    field: { onChange, onBlur, value },
-                    fieldState: { invalid },
-                  }) => (
-                    <NumberInput
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      value={value}
-                      variant="filled"
-                      isInvalid={invalid}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  )}
-                />
-                <FormErrorMessage>
-                  {errors.saleDetails?.[index].amount?.message}
-                </FormErrorMessage>
-              </Box>
-            </FormControl>
-          </Fragment>
-        ))}
-        <Flex justify="flex-end">
-          <Button type="submit" mt="6" isLoading={isSubmitting || isLoading}>
-            Simpan
-          </Button>
-        </Flex>
+      <Header>
+        <HeaderBackButton href="/sales" />
+        <HeaderTitle>Tambah Penjualan</HeaderTitle>
+      </Header>
+      <Box as="main" px="4" py="3">
+        <Box as="form" onSubmit={handleSubmit(onSubmit)}>
+          {fields.map((field, index) => (
+            <Fragment key={field.id}>
+              <FormControl
+                id={`saleDetails.${index}.itemId`}
+                d="flex"
+                isInvalid={errors.saleDetails?.[index].itemId}
+              >
+                <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
+                  Barang
+                </FormLabel>
+                <Box w={5 / 6}>
+                  <Select
+                    {...register(`saleDetails.${index}.itemId`)}
+                    defaultValue={field.itemId}
+                    variant="filled"
+                  >
+                    <option value="" disabled></option>
+                    {data.map(item => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Select>
+                  <FormErrorMessage>
+                    {errors.saleDetails?.[index].itemId?.message}
+                  </FormErrorMessage>
+                </Box>
+              </FormControl>
+              <FormControl
+                id={`saleDetails.${index}.amount`}
+                isInvalid={errors.saleDetails?.[index].amount}
+                d="flex"
+                mt="4"
+              >
+                <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
+                  Jumlah
+                </FormLabel>
+                <Box w={5 / 6}>
+                  <Controller
+                    defaultValue={field.amount}
+                    control={control}
+                    name={`saleDetails.${index}.amount`}
+                    render={({
+                      field: { onChange, onBlur, value },
+                      fieldState: { invalid },
+                    }) => (
+                      <NumberInput
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        value={value}
+                        variant="filled"
+                        isInvalid={invalid}
+                      >
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+                    )}
+                  />
+                  <FormErrorMessage>
+                    {errors.saleDetails?.[index].amount?.message}
+                  </FormErrorMessage>
+                </Box>
+              </FormControl>
+            </Fragment>
+          ))}
+          <Flex justify="flex-end">
+            <Button type="submit" mt="6" isLoading={isSubmitting || isLoading}>
+              Simpan
+            </Button>
+          </Flex>
+        </Box>
       </Box>
     </>
   );
@@ -146,7 +154,7 @@ const CreateSale = () => {
 export const getStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery("items", getItems);
+  await queryClient.prefetchQuery(getItemsKey, getItems);
 
   return {
     props: {

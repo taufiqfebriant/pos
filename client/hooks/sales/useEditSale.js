@@ -16,8 +16,10 @@ const GET_EDIT_SALE = gql`
   }
 `;
 
+const getEditSaleKey = "editSale";
+
 const getEditSale = async ({ queryKey }) => {
-  const [, , id] = queryKey;
+  const [, id] = queryKey;
 
   const { sale } = await client.request(GET_EDIT_SALE, {
     where: { id: Number(id) },
@@ -25,8 +27,6 @@ const getEditSale = async ({ queryKey }) => {
   return sale;
 };
 
-const useEditSale = id => {
-  return useQuery(["sales", "edit", id], getEditSale);
-};
+const useEditSale = id => useQuery([getEditSaleKey, id], getEditSale);
 
-export { getEditSale, useEditSale };
+export { getEditSale, getEditSaleKey, useEditSale };

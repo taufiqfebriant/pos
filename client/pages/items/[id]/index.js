@@ -1,23 +1,12 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import dayjs from "dayjs";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { VscEdit, VscEllipsis, VscTrash } from "react-icons/vsc";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
 import DeleteAlert from "../../../components/DeleteAlert";
+import DetailOptions from "../../../components/DetailOptions";
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
@@ -35,13 +24,10 @@ const Item = () => {
   const router = useRouter();
   const { data } = useItem(router.query.id);
 
-  const {
-    mutateAsync: deleteItem,
-    isLoading: deleteItemIsLoading,
-  } = useDeleteItem();
+  const { mutateAsync, isLoading } = useDeleteItem();
 
-  const deleteAction = async () => {
-    const success = await deleteItem({ id: parseInt(router.query.id) });
+  const deleteItem = async () => {
+    const success = await mutateAsync({ id: parseInt(router.query.id) });
     if (success) router.push("/items");
   };
 
@@ -50,10 +36,10 @@ const Item = () => {
       <Title title={data.name} />
       <DeleteAlert
         title="Hapus Barang"
-        isLoading={deleteItemIsLoading}
+        isLoading={isLoading}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        deleteAction={deleteAction}
+        deleteAction={deleteItem}
       />
       <Header>
         <HeaderBackButton href="/items" />
@@ -62,32 +48,10 @@ const Item = () => {
       <Box as="main" px="4" py="3">
         <Flex align="center" justify="space-between">
           <Heading size="lg">{data.name}</Heading>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label="Options"
-              icon={<VscEllipsis />}
-              variant="ghost"
-              color="gray.600"
-              fontSize="2xl"
-              _hover={{ bg: "gray.100", color: "green.500" }}
-              _active={{ bg: "gray.100", color: "green.500" }}
-            />
-            <MenuList>
-              <NextLink href={`/items/${data.id}/edit`} passHref>
-                <Link _hover={{ textDecoration: "none" }}>
-                  <MenuItem icon={<VscEdit />}>Edit</MenuItem>
-                </Link>
-              </NextLink>
-              <MenuItem
-                icon={<VscTrash />}
-                color="red.500"
-                onClick={() => setIsOpen(true)}
-              >
-                Hapus
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          <DetailOptions
+            editHref={`/items/${data.id}/edit`}
+            onDeleteClick={() => setIsOpen(true)}
+          />
         </Flex>
         <Box as="dl" d="flex" flexWrap="wrap" mt="4">
           <Box as="dd" w={1 / 5} fontWeight="medium">

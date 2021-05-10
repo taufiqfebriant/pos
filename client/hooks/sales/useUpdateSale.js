@@ -16,8 +16,6 @@ const updateSale = async variables => {
   return updateSale;
 };
 
-const useUpdateSale = () => {
-  return useMutation(newSale => updateSale(newSale));
-};
+const useUpdateSale = () => useMutation(newSale => updateSale(newSale));
 
 export { useUpdateSale };

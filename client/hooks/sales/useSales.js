@@ -12,19 +12,15 @@ const GET_SALES = gql`
   }
 `;
 
-const getSales = async ({ queryKey }) => {
-  const [, orderBy] = queryKey;
+const getSalesKey = filter => ["sales", filter];
 
-  const { sales } = await client.request(GET_SALES, {
-    filter: {
-      orderBy,
-    },
-  });
+const getSales = async ({ queryKey }) => {
+  const [, filter] = queryKey;
+
+  const { sales } = await client.request(GET_SALES, { filter });
   return sales;
 };
 
-const useSales = orderBy => {
-  return useQuery(["sales", orderBy], getSales);
-};
+const useSales = filter => useQuery(getSalesKey(filter), getSales);
 
-export { getSales, useSales };
+export { getSales, getSalesKey, useSales };
