@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Heading,
   Link,
   LinkBox,
   LinkOverlay,
@@ -20,16 +19,17 @@ import { getItems, useItems } from "../../hooks/items/useItems";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
+import HeaderTitle from "../../components/HeaderTitle";
 
 const Items = () => {
-  const { data } = useItems();
+  const { data } = useItems({ orderBy: { id: "desc" } });
 
   return (
     <>
       <Title title="Barang" />
-      <Header d="flex" alignItems="center" justifyContent="space-between">
-        <Heading fontSize="2xl">Barang</Heading>
-        <NextLink href="/sales/create" passHref>
+      <Header justify="space-between">
+        <HeaderTitle>Barang</HeaderTitle>
+        <NextLink href="/items/create" passHref>
           <Link _hover={{ textDecoration: "none" }}>
             <Button>Tambah Barang</Button>
           </Link>
@@ -74,7 +74,10 @@ const Items = () => {
 export const getStaticProps = async () => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery("items", getItems);
+  await queryClient.prefetchQuery(
+    ["items", { orderBy: { id: "desc" } }],
+    getItems
+  );
 
   return {
     props: {

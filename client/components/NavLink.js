@@ -14,8 +14,9 @@ const NavLink = ({ icon, children, href, activeProps }) => {
         <Link
           _hover={{
             textDecoration: "none",
-            bg: "gray.200",
+            bg: "gray.100",
             borderRadius: "base",
+            color: "green.500",
           }}
           pl="4"
           pr="12"

@@ -23,7 +23,7 @@ import { dehydrate } from "react-query/hydration";
 import Title from "../../../components/Title";
 import { getLayout } from "../../../components/Layout";
 import { getItems, useItems } from "../../../hooks/items/useItems";
-import { saleDetailsSchema } from "../../../schema/saleDetails";
+import { schema } from "../../../schema/saleDetails";
 import { useEditSale, getEditSale } from "../../../hooks/sales/useEditSale";
 import { getLatestSales } from "../../../hooks/sales/useLatestSales";
 import { useUpdateSale } from "../../../hooks/sales/useUpdateSale";
@@ -46,7 +46,7 @@ const EditSale = () => {
         amount: saleDetail.amount,
       })),
     },
-    resolver: yupResolver(saleDetailsSchema),
+    resolver: yupResolver(schema),
   });
 
   const { fields } = useFieldArray({

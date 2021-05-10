@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-export const saleDetailsSchema = yup.object().shape({
+export const schema = yup.object().shape({
   saleDetails: yup.array().of(
     yup.object().shape({
       itemId: yup

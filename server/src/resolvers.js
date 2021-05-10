@@ -93,6 +93,41 @@ export const resolvers = {
         })
       );
     },
+    createItem: async (_, { input }, { prisma }, info) => {
+      const select = new PrismaSelect(info).value;
+
+      const item = await prisma.item.create({
+        data: input,
+        ...select,
+      });
+
+      return item;
+    },
+    deleteItem: async (_, { id }, { prisma }) => {
+      try {
+        const prismaDelete = new PrismaDelete(prisma);
+        await prismaDelete.onDelete({ model: "Item", where: { id } });
+
+        await prisma.item.delete({
+          where: { id },
+        });
+        return true;
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    },
+    updateItem: async (_, { id, input }, { prisma }, info) => {
+      const select = new PrismaSelect(info).value;
+
+      const item = await prisma.item.update({
+        data: input,
+        where: { id },
+        ...select,
+      });
+
+      return item;
+    },
   },
   Query: {
     item: async (_, { where }, { prisma }, info) => {

@@ -10,7 +10,7 @@ const activeProps = {
 
 const Nav = () => {
   return (
-    <Box as="nav" pt="4" px="3">
+    <Box as="nav" pt="4" px="3" position="sticky" top="0" h="100vh">
       <NextLink href="/" passHref>
         <Link
           fontSize="2xl"

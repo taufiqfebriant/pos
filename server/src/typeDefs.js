@@ -38,6 +38,11 @@ export const typeDefs = gql`
     name: String!
   }
 
+  input ItemInput {
+    name: String!
+    price: Int!
+  }
+
   input SaleDetailInput {
     itemId: Int!
     amount: Int!
@@ -72,6 +77,9 @@ export const typeDefs = gql`
     updateSale(id: Int!, input: [SaleDetailInput!]!): Sale
     login(input: LoginInput): Boolean
     logout: Boolean
+    createItem(input: ItemInput!): Item
+    deleteItem(id: Int!): Boolean
+    updateItem(id: Int!, input: ItemInput!): Item
   }
 
   type Query {

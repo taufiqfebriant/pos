@@ -6,6 +6,7 @@ import { client } from "../../utils/graphQLClient";
 const GET_ITEM = gql`
   query GetItem($where: ItemWhereInput!) {
     item(where: $where) {
+      id
       name
       price
       createdAt

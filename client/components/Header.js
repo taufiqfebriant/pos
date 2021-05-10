@@ -1,10 +1,20 @@
-import { Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
 const Header = ({ children, ...rest }) => {
   return (
-    <Box borderBottomWidth="thin" px="4" py="3" {...rest}>
+    <Flex
+      borderBottomWidth="thin"
+      px="4"
+      py="2"
+      h="14"
+      align="center"
+      position="sticky"
+      top="0"
+      bg="white"
+      {...rest}
+    >
       {children}
-    </Box>
+    </Flex>
   );
 };
 

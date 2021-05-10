@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 
 import Title from "../components/Title";
 import { useLogin } from "../hooks/auth/useLogin";
-import { loginSchema } from "../schema/login";
+import { schema } from "../schema/login";
 import { useViewer } from "../hooks/auth/useViewer";
 
 const Login = () => {
@@ -35,7 +35,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(schema),
   });
 
   const { mutateAsync, isLoading: loginIsLoading } = useLogin();

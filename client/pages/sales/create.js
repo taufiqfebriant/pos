@@ -23,7 +23,7 @@ import { dehydrate } from "react-query/hydration";
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
 import { getItems, useItems } from "../../hooks/items/useItems";
-import { saleDetailsSchema } from "../../schema/saleDetails";
+import { schema } from "../../schema/saleDetails";
 import { useCreateSale } from "../../hooks/sales/useCreateSale";
 
 const CreateSale = () => {
@@ -45,7 +45,7 @@ const CreateSale = () => {
         },
       ],
     },
-    resolver: yupResolver(saleDetailsSchema),
+    resolver: yupResolver(schema),
   });
 
   const { fields } = useFieldArray({
