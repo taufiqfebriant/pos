@@ -12,6 +12,8 @@ const GET_ITEMS = gql`
   }
 `;
 
+const getItemsKey = filter => ["items", filter];
+
 const getItems = async ({ queryKey }) => {
   const [, filter] = queryKey;
 
@@ -19,8 +21,6 @@ const getItems = async ({ queryKey }) => {
   return items;
 };
 
-const useItems = filter => {
-  return useQuery(["items", filter], getItems);
-};
+const useItems = filter => useQuery(getItemsKey(filter), getItems);
 
-export { getItems, useItems };
+export { getItemsKey, getItems, useItems };

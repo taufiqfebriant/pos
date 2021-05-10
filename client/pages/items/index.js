@@ -15,7 +15,7 @@ import NextLink from "next/link";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
-import { getItems, useItems } from "../../hooks/items/useItems";
+import { getItems, getItemsKey, useItems } from "../../hooks/items/useItems";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
@@ -75,7 +75,7 @@ export const getStaticProps = async () => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(
-    ["items", { orderBy: { id: "desc" } }],
+    getItemsKey({ orderBy: { id: "desc" } }),
     getItems
   );
 

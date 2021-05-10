@@ -12,7 +12,7 @@ const GET_EDIT_ITEM = gql`
   }
 `;
 
-const editItemQueryKey = id => ["editItem", id];
+const editItemKey = id => ["editItem", id];
 
 const getEditItem = async ({ queryKey }) => {
   const [, id] = queryKey;
@@ -23,6 +23,6 @@ const getEditItem = async ({ queryKey }) => {
   return item;
 };
 
-const useEditItem = id => useQuery(editItemQueryKey(id), getEditItem);
+const useEditItem = id => useQuery(editItemKey(id), getEditItem);
 
-export { editItemQueryKey, getEditItem, useEditItem };
+export { editItemKey, getEditItem, useEditItem };

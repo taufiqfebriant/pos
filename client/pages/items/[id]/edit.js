@@ -25,11 +25,14 @@ import { getLayout } from "../../../components/Layout";
 import Title from "../../../components/Title";
 import { schema } from "../../../schema/item";
 import {
-  editItemQueryKey,
+  editItemKey,
   getEditItem,
   useEditItem,
 } from "../../../hooks/items/useEditItem";
-import { getLatestItems } from "../../../hooks/items/useLatestItems";
+import {
+  getLatestItems,
+  getLatestItemsKey,
+} from "../../../hooks/items/useLatestItems";
 import { useUpdateItem } from "../../../hooks/items/useUpdateItem";
 
 const EditItem = () => {
@@ -128,7 +131,7 @@ export const getStaticPaths = async () => {
   const queryClient = new QueryClient();
 
   const latestItems = await queryClient.fetchQuery(
-    ["latestItems", 10, { id: "desc" }],
+    getLatestItemsKey({ take: 10, orderBy: { id: "desc" } }),
     getLatestItems
   );
 
@@ -145,7 +148,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async ({ params: { id } }) => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(editItemQueryKey(id), getEditItem);
+  await queryClient.prefetchQuery(editItemKey(id), getEditItem);
 
   return {
     props: {

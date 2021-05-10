@@ -35,7 +35,7 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <QueryClientProvider client={queryClientRef.current}>
       <Hydrate state={pageProps.dehydratedState}>
-        <ChakraProvider theme={theme}>
+        <ChakraProvider theme={theme} portalZIndex={1}>
           {getLayout ? (
             getLayout(<Component {...pageProps} />)
           ) : (

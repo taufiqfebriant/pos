@@ -3,6 +3,7 @@ import { Flex } from "@chakra-ui/react";
 const Header = ({ children, ...rest }) => {
   return (
     <Flex
+      as="header"
       borderBottomWidth="thin"
       px="4"
       py="2"
@@ -11,6 +12,7 @@ const Header = ({ children, ...rest }) => {
       position="sticky"
       top="0"
       bg="white"
+      zIndex="1"
       {...rest}
     >
       {children}

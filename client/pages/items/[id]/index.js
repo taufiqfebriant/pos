@@ -24,8 +24,11 @@ import HeaderTitle from "../../../components/HeaderTitle";
 import { getLayout } from "../../../components/Layout";
 import Title from "../../../components/Title";
 import { useDeleteItem } from "../../../hooks/items/useDeleteItem";
-import { getItem, useItem } from "../../../hooks/items/useItem";
-import { getLatestItems } from "../../../hooks/items/useLatestItems";
+import { getItem, getItemKey, useItem } from "../../../hooks/items/useItem";
+import {
+  getLatestItems,
+  getLatestItemsKey,
+} from "../../../hooks/items/useLatestItems";
 
 const Item = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -119,7 +122,7 @@ export const getStaticPaths = async () => {
   const queryClient = new QueryClient();
 
   const latestItems = await queryClient.fetchQuery(
-    ["latestItems", 10, { id: "desc" }],
+    getLatestItemsKey({ take: 10, orderBy: { id: "desc" } }),
     getLatestItems
   );
 
@@ -136,7 +139,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async ({ params: { id } }) => {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["items", id], getItem);
+  await queryClient.prefetchQuery(getItemKey(id), getItem);
 
   return {
     props: {

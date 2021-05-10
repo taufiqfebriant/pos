@@ -10,16 +10,13 @@ const GET_LATEST_ITEMS = gql`
   }
 `;
 
-const getLatestItems = async ({ queryKey }) => {
-  const [, take, orderBy] = queryKey;
+const getLatestItemsKey = filter => ["latestItems", filter];
 
-  const { items } = await client.request(GET_LATEST_ITEMS, {
-    filter: {
-      take,
-      orderBy,
-    },
-  });
+const getLatestItems = async ({ queryKey }) => {
+  const [, filter] = queryKey;
+
+  const { items } = await client.request(GET_LATEST_ITEMS, { filter });
   return items;
 };
 
-export { getLatestItems };
+export { getLatestItemsKey, getLatestItems };
