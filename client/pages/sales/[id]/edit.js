@@ -13,10 +13,11 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { VscAdd, VscChromeClose } from "react-icons/vsc";
 import { QueryClient } from "react-query";
@@ -47,6 +48,7 @@ const defaultValue = {
 
 const EditSale = () => {
   const router = useRouter();
+  const [total, setTotal] = useState(0);
   const { data: sale } = useEditSale(router.query.id);
 
   const { data: items } = useItems();
@@ -56,6 +58,7 @@ const EditSale = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm({
     defaultValues: {
       saleDetails: sale.saleDetails.map(saleDetail => ({
@@ -80,6 +83,21 @@ const EditSale = () => {
     });
     if (id) router.push(`/sales/${id}`);
   };
+
+  const watchAllFields = watch(`saleDetails`);
+
+  useEffect(() => {
+    let total = 0;
+
+    watchAllFields.map(field => {
+      if (field.itemId && field.amount) {
+        const price = items.find(item => item.id === field.itemId).price;
+        total += price * field.amount;
+      }
+    });
+
+    setTotal(total);
+  }, [watchAllFields, items]);
 
   return (
     <>
@@ -163,19 +181,29 @@ const EditSale = () => {
               </FormControl>
             </HStack>
           ))}
-          <HStack justify="flex-end" mt="6">
-            <IconButton
-              colorScheme="gray"
-              aria-label="Add field"
-              icon={<VscAdd />}
-              _active={{ bg: "gray.100" }}
-              w={1 / 12}
-              onClick={() => append(defaultValue)}
-            />
-            <Button type="submit" isLoading={isSubmitting || isLoading}>
-              Simpan
-            </Button>
-          </HStack>
+          <Flex align="center" justify="space-between" mt="6">
+            <Text fontSize="lg" fontWeight="medium">
+              Total:{" "}
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0,
+              }).format(total)}
+            </Text>
+            <HStack>
+              <IconButton
+                colorScheme="gray"
+                aria-label="Add field"
+                icon={<VscAdd />}
+                _active={{ bg: "gray.100" }}
+                w={1 / 12}
+                onClick={() => append(defaultValue)}
+              />
+              <Button type="submit" isLoading={isSubmitting || isLoading}>
+                Simpan
+              </Button>
+            </HStack>
+          </Flex>
         </Box>
       </Box>
     </>

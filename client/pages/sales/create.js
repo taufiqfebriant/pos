@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -12,10 +13,12 @@ import {
   NumberInputField,
   NumberInputStepper,
   Select,
+  Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
@@ -28,7 +31,6 @@ import Header from "../../components/Header";
 import HeaderBackButton from "../../components/HeaderBackButton";
 import HeaderTitle from "../../components/HeaderTitle";
 import { VscAdd, VscChromeClose } from "react-icons/vsc";
-import { useEffect } from "react";
 
 const defaultValue = {
   itemId: "",
@@ -37,6 +39,7 @@ const defaultValue = {
 
 const CreateSale = () => {
   const router = useRouter();
+  const [total, setTotal] = useState(0);
 
   const { data } = useItems();
 
@@ -45,6 +48,7 @@ const CreateSale = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm({
     defaultValues: {
       saleDetails: [defaultValue],
@@ -64,9 +68,20 @@ const CreateSale = () => {
     if (id) router.push(`/sales/${id}`);
   };
 
+  const watchAllFields = watch(`saleDetails`);
+
   useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+    let total = 0;
+
+    watchAllFields.map(field => {
+      if (field.itemId && field.amount) {
+        const price = data.find(item => item.id === field.itemId).price;
+        total += price * field.amount;
+      }
+    });
+
+    setTotal(total);
+  }, [watchAllFields, data]);
 
   return (
     <>
@@ -78,7 +93,7 @@ const CreateSale = () => {
       <Box as="main" px="4" py="3">
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           {fields.map((field, index) => (
-            <HStack key={field.id} mt={index > 0 ? 4 : undefined} align="unset">
+            <HStack key={field.id} mt={index > 0 && 4} align="unset">
               <FormControl
                 id={`saleDetails.${index}.itemId`}
                 isInvalid={errors.saleDetails?.[index]?.itemId}
@@ -150,19 +165,29 @@ const CreateSale = () => {
               </FormControl>
             </HStack>
           ))}
-          <HStack justify="flex-end" mt="6">
-            <IconButton
-              colorScheme="gray"
-              aria-label="Add field"
-              icon={<VscAdd />}
-              _active={{ bg: "gray.100" }}
-              w={1 / 12}
-              onClick={() => append(defaultValue)}
-            />
-            <Button type="submit" isLoading={isSubmitting || isLoading}>
-              Simpan
-            </Button>
-          </HStack>
+          <Flex align="center" justify="space-between" mt="6">
+            <Text fontSize="lg" fontWeight="medium">
+              Total:{" "}
+              {new Intl.NumberFormat("id", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0,
+              }).format(total)}
+            </Text>
+            <HStack>
+              <IconButton
+                colorScheme="gray"
+                aria-label="Add field"
+                icon={<VscAdd />}
+                _active={{ bg: "gray.100" }}
+                w={1 / 12}
+                onClick={() => append(defaultValue)}
+              />
+              <Button type="submit" isLoading={isSubmitting || isLoading}>
+                Simpan
+              </Button>
+            </HStack>
+          </Flex>
         </Box>
       </Box>
     </>

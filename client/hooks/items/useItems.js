@@ -8,6 +8,7 @@ const GET_ITEMS = gql`
     items(filter: $filter) {
       id
       name
+      price
     }
   }
 `;
