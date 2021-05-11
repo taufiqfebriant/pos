@@ -5,6 +5,7 @@ import {
   Table,
   Tbody,
   Td,
+  Tfoot,
   Th,
   Thead,
   Tr,
@@ -34,6 +35,15 @@ const Sale = () => {
 
   const router = useRouter();
   const { data } = useSale(router.query.id);
+
+  const total = () => {
+    const sum = data.saleDetails.reduce(
+      (partial_sum, { unitPrice, amount }) => partial_sum + unitPrice * amount,
+      0
+    );
+
+    return sum;
+  };
 
   const { mutateAsync, isLoading } = useDeleteSale();
 
@@ -84,6 +94,8 @@ const Sale = () => {
               <Tr>
                 <Th>Nama Barang</Th>
                 <Th isNumeric>Jumlah</Th>
+                <Th isNumeric>Harga Satuan</Th>
+                <Th isNumeric>Total</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -91,9 +103,35 @@ const Sale = () => {
                 <Tr key={saleDetail.id}>
                   <Td>{saleDetail.item.name}</Td>
                   <Td isNumeric>{saleDetail.amount}</Td>
+                  <Td isNumeric>
+                    {new Intl.NumberFormat("id", {
+                      style: "currency",
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                    }).format(saleDetail.unitPrice)}
+                  </Td>
+                  <Td isNumeric>
+                    {new Intl.NumberFormat("id", {
+                      style: "currency",
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                    }).format(saleDetail.unitPrice * saleDetail.amount)}
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
+            <Tfoot>
+              <Tr>
+                <Th colSpan="3">Total</Th>
+                <Th isNumeric>
+                  {new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(total())}
+                </Th>
+              </Tr>
+            </Tfoot>
           </Table>
         </Box>
       </Box>

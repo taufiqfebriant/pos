@@ -1,4 +1,5 @@
-import { Heading } from "@chakra-ui/react";
+import Header from "../components/Header";
+import HeaderTitle from "../components/HeaderTitle";
 import Title from "../components/Title";
 import { getLayout } from "../components/Layout";
 
@@ -6,7 +7,9 @@ const Dashboard = () => {
   return (
     <>
       <Title>Dasbor</Title>
-      <Heading size="lg">Dasbor</Heading>
+      <Header>
+        <HeaderTitle>Dasbor</HeaderTitle>
+      </Header>
     </>
   );
 };
