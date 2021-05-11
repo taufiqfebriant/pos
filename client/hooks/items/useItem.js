@@ -21,7 +21,7 @@ const getItem = async ({ queryKey }) => {
   const [, id] = queryKey;
 
   const { item } = await client.request(GET_ITEM, {
-    where: { id: Number(id) },
+    where: { id: parseInt(id) },
   });
   return item;
 };

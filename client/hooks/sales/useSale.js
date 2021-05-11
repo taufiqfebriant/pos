@@ -27,8 +27,7 @@ const getSale = async ({ queryKey }) => {
   const [, id] = queryKey;
 
   const { sale } = await client.request(GET_SALE, {
-    // FIXME ubah Number() ke parseInt()
-    where: { id: Number(id) },
+    where: { id: parseInt(id) },
   });
   return sale;
 };

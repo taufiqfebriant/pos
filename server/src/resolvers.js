@@ -7,7 +7,7 @@ export const resolvers = {
       await Promise.all(
         input.map(async saleDetail => {
           const { price } = await prisma.item.findUnique({
-            where: { id: Number(saleDetail.itemId) },
+            where: { id: parseInt(saleDetail.itemId) },
           });
           Object.assign(saleDetail, { unitPrice: price });
         })
@@ -45,7 +45,7 @@ export const resolvers = {
       await Promise.all(
         input.map(async saleDetail => {
           const { price } = await prisma.item.findUnique({
-            where: { id: Number(saleDetail.itemId) },
+            where: { id: parseInt(saleDetail.itemId) },
           });
           Object.assign(saleDetail, { unitPrice: price });
         })

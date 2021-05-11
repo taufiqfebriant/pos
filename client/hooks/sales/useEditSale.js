@@ -22,7 +22,7 @@ const getEditSale = async ({ queryKey }) => {
   const [, id] = queryKey;
 
   const { sale } = await client.request(GET_EDIT_SALE, {
-    where: { id: Number(id) },
+    where: { id: parseInt(id) },
   });
   return sale;
 };

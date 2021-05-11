@@ -78,7 +78,7 @@ const EditSale = () => {
 
   const onSubmit = async ({ saleDetails }) => {
     const { id } = await mutateAsync({
-      id: Number(router.query.id),
+      id: parseInt(router.query.id),
       input: saleDetails,
     });
     if (id) router.push(`/sales/${id}`);
