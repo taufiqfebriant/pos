@@ -5,6 +5,8 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
+  IconButton,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -16,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { VscAdd, VscChromeClose } from "react-icons/vsc";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
 
@@ -36,6 +39,11 @@ import { useUpdateSale } from "../../../hooks/sales/useUpdateSale";
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
+
+const defaultValue = {
+  itemId: "",
+  amount: undefined,
+};
 
 const EditSale = () => {
   const router = useRouter();
@@ -58,7 +66,7 @@ const EditSale = () => {
     resolver: yupResolver(schema),
   });
 
-  const { fields } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name: "saleDetails",
   });
@@ -83,43 +91,36 @@ const EditSale = () => {
       <Box as="main" px="4" py="3">
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           {fields.map((field, index) => (
-            <Fragment key={field.id}>
+            <HStack key={field.id} mt={index > 0 ? 4 : undefined} align="unset">
               <FormControl
                 id={`saleDetails.${index}.itemId`}
-                d="flex"
-                isInvalid={errors.saleDetails?.[index].itemId}
+                isInvalid={errors.saleDetails?.[index]?.itemId}
+                w={8 / 12}
               >
-                <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
-                  Barang
-                </FormLabel>
-                <Box w={5 / 6}>
-                  <Select
-                    {...register(`saleDetails.${index}.itemId`)}
-                    defaultValue={field.itemId}
-                    variant="filled"
-                  >
-                    <option value="" disabled></option>
-                    {items.map(item => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>
-                    {errors.saleDetails?.[index].itemId?.message}
-                  </FormErrorMessage>
-                </Box>
+                <FormLabel>Barang</FormLabel>
+                <Select
+                  {...register(`saleDetails.${index}.itemId`)}
+                  defaultValue={field.itemId}
+                  variant="filled"
+                >
+                  <option value="" disabled></option>
+                  {items.map(item => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>
+                  {errors.saleDetails?.[index]?.itemId?.message}
+                </FormErrorMessage>
               </FormControl>
               <FormControl
                 id={`saleDetails.${index}.amount`}
-                isInvalid={errors.saleDetails?.[index].amount}
-                d="flex"
-                mt="4"
+                isInvalid={errors.saleDetails?.[index]?.amount}
+                w={4 / 12}
               >
-                <FormLabel mt="2" mb="0" mr="0" w={1 / 6}>
-                  Jumlah
-                </FormLabel>
-                <Box w={5 / 6}>
+                <FormLabel>Jumlah</FormLabel>
+                <HStack>
                   <Controller
                     defaultValue={field.amount}
                     control={control}
@@ -134,6 +135,7 @@ const EditSale = () => {
                         value={value}
                         variant="filled"
                         isInvalid={invalid}
+                        w={fields.length > 1 && 3 / 4}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -143,18 +145,37 @@ const EditSale = () => {
                       </NumberInput>
                     )}
                   />
-                  <FormErrorMessage>
-                    {errors.saleDetails?.[index].amount?.message}
-                  </FormErrorMessage>
-                </Box>
+                  {fields.length > 1 && (
+                    <IconButton
+                      colorScheme="gray"
+                      color="red.500"
+                      aria-label="Delete field"
+                      icon={<VscChromeClose />}
+                      _active={{ bg: "gray.100" }}
+                      w={1 / 4}
+                      onClick={() => remove(index)}
+                    />
+                  )}
+                </HStack>
+                <FormErrorMessage>
+                  {errors.saleDetails?.[index]?.amount?.message}
+                </FormErrorMessage>
               </FormControl>
-            </Fragment>
+            </HStack>
           ))}
-          <Flex justify="flex-end">
-            <Button type="submit" mt="6" isLoading={isSubmitting || isLoading}>
-              Perbarui
+          <HStack justify="flex-end" mt="6">
+            <IconButton
+              colorScheme="gray"
+              aria-label="Add field"
+              icon={<VscAdd />}
+              _active={{ bg: "gray.100" }}
+              w={1 / 12}
+              onClick={() => append(defaultValue)}
+            />
+            <Button type="submit" isLoading={isSubmitting || isLoading}>
+              Simpan
             </Button>
-          </Flex>
+          </HStack>
         </Box>
       </Box>
     </>

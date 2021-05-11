@@ -82,7 +82,6 @@ const Sale = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>No. Barang</Th>
                 <Th>Nama Barang</Th>
                 <Th isNumeric>Jumlah</Th>
               </Tr>
@@ -90,7 +89,6 @@ const Sale = () => {
             <Tbody>
               {data.saleDetails.map(saleDetail => (
                 <Tr key={saleDetail.id}>
-                  <Td>{saleDetail.id}</Td>
                   <Td>{saleDetail.item.name}</Td>
                   <Td isNumeric>{saleDetail.amount}</Td>
                 </Tr>
