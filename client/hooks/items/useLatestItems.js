@@ -3,20 +3,24 @@ import { gql } from "graphql-request";
 import { client } from "../../utils/graphQLClient";
 
 const GET_LATEST_ITEMS = gql`
-  query GetLatestItems($filter: ItemsFilterInput) {
-    items(filter: $filter) {
-      id
+  query GetLatestItems($first: Int, $orderBy: ItemOrderByInput) {
+    items(first: $first, orderBy: $orderBy) {
+      edges {
+        node {
+          id
+        }
+      }
     }
   }
 `;
 
-const getLatestItemsKey = filter => ["latestItems", filter];
-
 const getLatestItems = async ({ queryKey }) => {
-  const [, filter] = queryKey;
+  const [, variables] = queryKey;
 
-  const { items } = await client.request(GET_LATEST_ITEMS, { filter });
+  const { items } = await client.request(GET_LATEST_ITEMS, variables);
   return items;
 };
 
-export { getLatestItemsKey, getLatestItems };
+const getLatestItemsKey = variables => ["latestItems", variables];
+
+export { getLatestItems, getLatestItemsKey };

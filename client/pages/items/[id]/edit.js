@@ -53,10 +53,8 @@ const EditItem = () => {
     },
   });
 
-  const {
-    mutateAsync: updateItem,
-    isLoading: updateItemIsLoading,
-  } = useUpdateItem();
+  const { mutateAsync: updateItem, isLoading: updateItemIsLoading } =
+    useUpdateItem();
 
   const onSubmit = async input => {
     const { id } = await updateItem({ id: parseInt(router.query.id), input });
@@ -131,12 +129,12 @@ export const getStaticPaths = async () => {
   const queryClient = new QueryClient();
 
   const latestItems = await queryClient.fetchQuery(
-    getLatestItemsKey({ take: 10, orderBy: { id: "desc" } }),
+    getLatestItemsKey({ first: 10, orderBy: { createdAt: "desc" } }),
     getLatestItems
   );
 
-  const paths = latestItems.map(sale => ({
-    params: { id: sale.id },
+  const paths = latestItems.edges.map(edge => ({
+    params: { id: edge.node.id },
   }));
 
   return {
@@ -144,7 +142,6 @@ export const getStaticPaths = async () => {
     fallback: true,
   };
 };
-
 export const getStaticProps = async ({ params: { id } }) => {
   const queryClient = new QueryClient();
 

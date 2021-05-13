@@ -86,12 +86,12 @@ export const getStaticPaths = async () => {
   const queryClient = new QueryClient();
 
   const latestItems = await queryClient.fetchQuery(
-    getLatestItemsKey({ take: 10, orderBy: { id: "desc" } }),
+    getLatestItemsKey({ first: 10, orderBy: { createdAt: "desc" } }),
     getLatestItems
   );
 
-  const paths = latestItems.map(sale => ({
-    params: { id: sale.id },
+  const paths = latestItems.edges.map(edge => ({
+    params: { id: edge.node.id },
   }));
 
   return {

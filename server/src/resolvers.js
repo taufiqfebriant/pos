@@ -1,7 +1,13 @@
 import { PrismaDelete, PrismaSelect } from "@paljs/plugins";
 import { compare } from "bcrypt";
+import graphqlFields from "graphql-fields";
 
 export const resolvers = {
+  Node: {
+    __resolveType: obj => {
+      return obj.__typename;
+    },
+  },
   Mutation: {
     createSale: async (_, { input }, { prisma }, info) => {
       await Promise.all(
@@ -138,13 +144,60 @@ export const resolvers = {
         ...select,
       });
     },
-    items: async (_, { filter }, { prisma }, info) => {
-      const select = new PrismaSelect(info).value;
+    items: async (_, { first, after, orderBy }, { prisma }, info) => {
+      let hasNextPage = false;
+      let edges, totalCount, endCursor;
+      const topLevelFields = Object.keys(graphqlFields(info));
 
-      return await prisma.item.findMany({
-        ...filter,
-        ...select,
-      });
+      if (after) {
+        after = parseInt(
+          Buffer.from(after, "base64").toString("ascii").split(":")[1]
+        );
+      }
+
+      if (
+        topLevelFields.includes("edges") ||
+        topLevelFields.includes("pageInfo")
+      ) {
+        const select = new PrismaSelect(info).valueOf("edges.node", "Item", {
+          select: { id: true },
+        });
+
+        const items = await prisma.item.findMany({
+          skip: after ? 1 : undefined,
+          cursor: after ? { id: after } : undefined,
+          take: first + 1,
+          orderBy,
+          ...select,
+        });
+
+        if (items.length > first) {
+          hasNextPage = true;
+          items.pop();
+        }
+
+        edges = items.map(item => ({
+          cursor: Buffer.from(`ItemConnection:${item.id.toString()}`).toString(
+            "base64"
+          ),
+          node: item,
+        }));
+
+        endCursor = edges[edges.length - 1].cursor;
+      }
+
+      if (topLevelFields.includes("totalCount")) {
+        totalCount = await prisma.item.count();
+      }
+
+      return {
+        edges,
+        totalCount,
+        pageInfo: {
+          endCursor,
+          hasNextPage,
+        },
+      };
     },
     sale: async (_, { where }, { prisma }, info) => {
       const select = new PrismaSelect(info).value;

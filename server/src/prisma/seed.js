@@ -15,7 +15,7 @@ async function main() {
     },
   });
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 30; i++) {
     await prisma.item.create({
       data: {
         name: faker.commerce.productName(),

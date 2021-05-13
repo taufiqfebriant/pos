@@ -1,31 +1,40 @@
 import { gql } from "graphql-request";
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 
 import { client } from "../../utils/graphQLClient";
 
 const GET_ITEMS = gql`
-  query GetItems($filter: ItemsFilterInput) {
-    items(filter: $filter) {
-      id
-      name
-      price
+  query GetItems($first: Int, $after: String, $orderBy: ItemOrderByInput) {
+    items(first: $first, after: $after, orderBy: $orderBy) {
+      edges {
+        node {
+          id
+          name
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 `;
 
-const getItemsKey = "items";
+const getItems = async ({ queryKey, pageParam }) => {
+  const [, variables] = queryKey;
 
-const getItems = async ({ queryKey }) => {
-  let filter;
-  if (Array.isArray(queryKey)) {
-    [, filter] = queryKey;
-  }
+  const { items } = await client.request(GET_ITEMS, {
+    ...variables,
+    after: pageParam,
+  });
 
-  const { items } = await client.request(GET_ITEMS, filter && { filter });
   return items;
 };
 
-const useItems = filter =>
-  useQuery(filter ? [getItemsKey, filter] : getItemsKey, getItems);
+const getItemsKey = variables => ["items", variables];
 
-export { getItemsKey, getItems, useItems };
+const useItems = (variables, options) => {
+  return useInfiniteQuery(getItemsKey(variables), getItems, options);
+};
+
+export { getItems, getItemsKey, useItems };

@@ -10,12 +10,40 @@ export const typeDefs = gql`
     id: Sort!
   }
 
-  type Item {
+  interface Node {
+    id: ID!
+  }
+
+  type PageInfo {
+    endCursor: String!
+    hasNextPage: Boolean!
+  }
+
+  type Item implements Node {
     id: ID!
     name: String!
     price: Int!
     createdAt: String!
     updatedAt: String!
+  }
+
+  type ItemEdge {
+    cursor: String!
+    node: Item!
+  }
+
+  type ItemConnection {
+    edges: [ItemEdge]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+  }
+
+  input ItemOrderByInput {
+    createdAt: Sort!
+  }
+
+  input ItemWhereInput {
+    id: Int!
   }
 
   type Sale {
@@ -57,15 +85,6 @@ export const typeDefs = gql`
     orderBy: OrderByInput
   }
 
-  input ItemWhereInput {
-    id: Int!
-  }
-
-  input ItemsFilterInput {
-    take: Int
-    orderBy: OrderByInput
-  }
-
   input LoginInput {
     username: String!
     password: String!
@@ -84,7 +103,7 @@ export const typeDefs = gql`
 
   type Query {
     item(where: ItemWhereInput!): Item
-    items(filter: ItemsFilterInput): [Item!]
+    items(first: Int, after: String, orderBy: ItemOrderByInput): ItemConnection
     sale(where: SaleWhereInput!): Sale
     sales(filter: SalesFilterInput): [Sale!]
     viewer: User
