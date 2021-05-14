@@ -1,26 +1,41 @@
 import { gql } from "graphql-request";
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 
 import { client } from "../../utils/graphQLClient";
 
 const GET_SALES = gql`
-  query GetSales($filter: SalesFilterInput) {
-    sales(filter: $filter) {
-      id
-      updatedAt
+  query GetSales($first: Int, $after: String, $orderBy: SaleOrderByInput) {
+    sales(first: $first, after: $after, orderBy: $orderBy) {
+      edges {
+        node {
+          id
+          createdAt
+          updatedAt
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
     }
   }
 `;
 
-const getSalesKey = filter => ["sales", filter];
+const getSales = async ({ queryKey, pageParam }) => {
+  const [, variables] = queryKey;
 
-const getSales = async ({ queryKey }) => {
-  const [, filter] = queryKey;
+  const { sales } = await client.request(GET_SALES, {
+    ...variables,
+    after: pageParam,
+  });
 
-  const { sales } = await client.request(GET_SALES, { filter });
   return sales;
 };
 
-const useSales = filter => useQuery(getSalesKey(filter), getSales);
+const getSalesKey = variables => ["sales", variables];
+
+const useSales = (variables, options) => {
+  return useInfiniteQuery(getSalesKey(variables), getSales, options);
+};
 
 export { getSales, getSalesKey, useSales };

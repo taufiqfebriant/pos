@@ -11,9 +11,7 @@ import { resolvers } from "./resolvers";
 
 let RedisStore = connectRedis(session);
 let redisClient = redis.createClient();
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+const prisma = new PrismaClient();
 
 const startApolloServer = async () => {
   const app = express();

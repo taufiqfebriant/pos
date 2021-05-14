@@ -46,11 +46,30 @@ export const typeDefs = gql`
     id: Int!
   }
 
-  type Sale {
+  type Sale implements Node {
     id: ID!
     createdAt: String!
     updatedAt: String!
     saleDetails: [SaleDetail!]!
+  }
+
+  type SaleEdge {
+    cursor: String!
+    node: Sale!
+    total: Int!
+  }
+
+  type SaleConnection {
+    edges: [SaleEdge]!
+    pageInfo: PageInfo!
+  }
+
+  input SaleOrderByInput {
+    id: Sort!
+  }
+
+  input SaleWhereInput {
+    id: Int!
   }
 
   type SaleDetail {
@@ -74,10 +93,6 @@ export const typeDefs = gql`
   input SaleDetailInput {
     itemId: Int!
     amount: Int!
-  }
-
-  input SaleWhereInput {
-    id: Int!
   }
 
   input SalesFilterInput {
@@ -105,7 +120,7 @@ export const typeDefs = gql`
     item(where: ItemWhereInput!): Item
     items(first: Int, after: String, orderBy: ItemOrderByInput): ItemConnection
     sale(where: SaleWhereInput!): Sale
-    sales(filter: SalesFilterInput): [Sale!]
+    sales(first: Int, after: String, orderBy: SaleOrderByInput): SaleConnection
     viewer: User
   }
 `;

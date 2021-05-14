@@ -21,6 +21,34 @@ async function main() {
         name: faker.commerce.productName(),
         price: faker.datatype.number(),
       },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  for (let j = 0; j < 30; j++) {
+    const amount1 = Math.floor(Math.random() * (3 - 1 + 1) + 1);
+    const amount2 = Math.floor(Math.random() * (3 - 1 + 1) + 1);
+    const itemId1 = Math.floor(Math.random() * (15 - 1 + 1) + 1);
+    const itemId2 = Math.floor(Math.random() * (30 - 16 + 1) + 16);
+
+    const { price: price1 } = await prisma.item.findUnique({
+      where: { id: itemId1 },
+    });
+    const { price: price2 } = await prisma.item.findUnique({
+      where: { id: itemId2 },
+    });
+
+    await prisma.sale.create({
+      data: {
+        saleDetails: {
+          create: [
+            { amount: amount1, itemId: itemId1, unitPrice: price1 },
+            { amount: amount2, itemId: itemId2, unitPrice: price2 },
+          ],
+        },
+      },
     });
   }
 }
