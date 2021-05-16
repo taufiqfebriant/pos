@@ -20,22 +20,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { VscAdd, VscChromeClose } from "react-icons/vsc";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 
 import Title from "../../../components/Title";
 import { getLayout } from "../../../components/Layout";
-import { getItems, getItemsKey, useItems } from "../../../hooks/items/useItems";
+import { useItems } from "../../../hooks/items/useItems";
 import { schema } from "../../../schema/saleDetails";
-import {
-  useEditSale,
-  getEditSale,
-  getEditSaleKey,
-} from "../../../hooks/sales/useEditSale";
-import {
-  getLatestSales,
-  getLatestSalesKey,
-} from "../../../hooks/sales/useLatestSales";
+import { useEditSale } from "../../../hooks/sales/useEditSale";
 import { useUpdateSale } from "../../../hooks/sales/useUpdateSale";
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
@@ -208,37 +198,6 @@ const EditSale = () => {
       </Box>
     </>
   );
-};
-
-export const getStaticPaths = async () => {
-  const queryClient = new QueryClient();
-
-  const latestSales = await queryClient.fetchQuery(
-    [getLatestSalesKey, { take: 10, orderBy: { id: "desc" } }],
-    getLatestSales
-  );
-
-  const paths = latestSales.map(sale => ({
-    params: { id: sale.id },
-  }));
-
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps = async ({ params: { id } }) => {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery([getEditSaleKey, id], getEditSale);
-  await queryClient.prefetchQuery(getItemsKey, getItems);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 
 EditSale.getLayout = getLayout;

@@ -6,7 +6,7 @@ import { getLayout } from "../components/Layout";
 const Dashboard = () => {
   return (
     <>
-      <Title>Dasbor</Title>
+      <Title title="Dasbor"></Title>
       <Header>
         <HeaderTitle>Dasbor</HeaderTitle>
       </Header>

@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import NextLink from "next/link";
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 
 import Header from "../../components/Header";
 import HeaderTitle from "../../components/HeaderTitle";
@@ -30,10 +30,6 @@ const Sales = () => {
         return pageInfo.hasNextPage && pageInfo.endCursor;
       },
     });
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   return (
     <>
@@ -57,7 +53,7 @@ const Sales = () => {
               <Thead>
                 <Tr>
                   <Th>No. Penjualan</Th>
-                  <Th>Totaln</Th>
+                  <Th>Total</Th>
                   <Th>Dibuat pada</Th>
                   <Th>Diperbarui pada</Th>
                 </Tr>

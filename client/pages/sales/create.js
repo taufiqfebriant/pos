@@ -19,12 +19,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { QueryClient } from "react-query";
-import { dehydrate } from "react-query/hydration";
 
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
-import { getItems, getItemsKey, useItems } from "../../hooks/items/useItems";
+import { useItems } from "../../hooks/items/useItems";
 import { schema } from "../../schema/saleDetails";
 import { useCreateSale } from "../../hooks/sales/useCreateSale";
 import Header from "../../components/Header";
@@ -106,11 +104,11 @@ const CreateSale = () => {
                   variant="filled"
                 >
                   <option value="" disabled></option>
-                  {data.map(item => (
+                  {/* {data.map(item => (
                     <option key={item.id} value={item.id}>
                       {item.name}
                     </option>
-                  ))}
+                  ))} */}
                 </Select>
                 <FormErrorMessage>
                   {errors.saleDetails?.[index]?.itemId?.message}
@@ -192,18 +190,6 @@ const CreateSale = () => {
       </Box>
     </>
   );
-};
-
-export const getStaticProps = async () => {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(getItemsKey, getItems);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 
 CreateSale.getLayout = getLayout;

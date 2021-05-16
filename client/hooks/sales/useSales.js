@@ -11,6 +11,7 @@ const GET_SALES = gql`
           id
           createdAt
           updatedAt
+          total
         }
       }
       pageInfo {

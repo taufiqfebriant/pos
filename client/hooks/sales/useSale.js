@@ -16,12 +16,12 @@ const GET_SALE = gql`
         item {
           name
         }
+        total
       }
+      total
     }
   }
 `;
-
-const getSaleKey = "sales";
 
 const getSale = async ({ queryKey }) => {
   const [, id] = queryKey;
@@ -32,6 +32,8 @@ const getSale = async ({ queryKey }) => {
   return sale;
 };
 
-const useSale = id => useQuery([getSaleKey, id], getSale);
+const getSaleKey = id => ["sales", id];
+
+const useSale = id => useQuery(getSaleKey(id), getSale);
 
 export { getSale, getSaleKey, useSale };
