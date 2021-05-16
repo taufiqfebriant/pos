@@ -12,41 +12,39 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Select,
   Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { VscAdd, VscChromeClose } from "react-icons/vsc";
 
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
-import { useItems } from "../../hooks/items/useItems";
 import { schema } from "../../schema/saleDetails";
 import { useCreateSale } from "../../hooks/sales/useCreateSale";
+import Combobox from "../../components/Combobox";
 import Header from "../../components/Header";
 import HeaderBackButton from "../../components/HeaderBackButton";
 import HeaderTitle from "../../components/HeaderTitle";
-import { VscAdd, VscChromeClose } from "react-icons/vsc";
 
 const defaultValue = {
   itemId: "",
   amount: undefined,
+  price: 0,
 };
 
 const CreateSale = () => {
   const router = useRouter();
   const [total, setTotal] = useState(0);
 
-  const { data } = useItems();
-
   const {
     control,
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
+    setValue,
   } = useForm({
     defaultValues: {
       saleDetails: [defaultValue],
@@ -62,7 +60,9 @@ const CreateSale = () => {
   const { mutateAsync, isLoading } = useCreateSale();
 
   const onSubmit = async ({ saleDetails }) => {
-    const { id } = await mutateAsync({ input: saleDetails });
+    const input = saleDetails.map(({ price, ...rest }) => rest);
+
+    const { id } = await mutateAsync({ input });
     if (id) router.push(`/sales/${id}`);
   };
 
@@ -73,13 +73,12 @@ const CreateSale = () => {
 
     watchAllFields.map(field => {
       if (field.itemId && field.amount) {
-        const price = data.find(item => item.id === field.itemId).price;
-        total += price * field.amount;
+        total += field.price * field.amount;
       }
     });
 
     setTotal(total);
-  }, [watchAllFields, data]);
+  }, [watchAllFields]);
 
   return (
     <>
@@ -92,28 +91,24 @@ const CreateSale = () => {
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           {fields.map((field, index) => (
             <HStack key={field.id} mt={index > 0 && 4} align="unset">
-              <FormControl
-                id={`saleDetails.${index}.itemId`}
-                isInvalid={errors.saleDetails?.[index]?.itemId}
-                w={8 / 12}
-              >
-                <FormLabel>Barang</FormLabel>
-                <Select
-                  {...register(`saleDetails.${index}.itemId`)}
-                  defaultValue={field.itemId}
-                  variant="filled"
-                >
-                  <option value="" disabled></option>
-                  {/* {data.map(item => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))} */}
-                </Select>
-                <FormErrorMessage>
-                  {errors.saleDetails?.[index]?.itemId?.message}
-                </FormErrorMessage>
-              </FormControl>
+              <Controller
+                defaultValue={field.itemId}
+                control={control}
+                name={`saleDetails.${index}.itemId`}
+                render={({
+                  field: { onChange, name },
+                  fieldState: { invalid, error },
+                }) => (
+                  <Combobox
+                    onChange={onChange}
+                    name={name}
+                    isInvalid={invalid}
+                    error={error}
+                    setPriceValue={setValue}
+                    index={index}
+                  />
+                )}
+              />
               <FormControl
                 id={`saleDetails.${index}.amount`}
                 isInvalid={errors.saleDetails?.[index]?.amount}

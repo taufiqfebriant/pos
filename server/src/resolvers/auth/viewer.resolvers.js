@@ -8,7 +8,7 @@ export default {
 
       const select = new PrismaSelect(info).value;
       return await prisma.user.findUnique({
-        where: { id: req.session.userId },
+        where: { id },
         ...select,
       });
     },

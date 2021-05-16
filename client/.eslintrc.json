@@ -43,6 +43,12 @@
           "preferButton"
         ]
       }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "ignoreRestSiblings": true
+      }
     ]
   }
 }

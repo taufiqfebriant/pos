@@ -11,10 +11,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import Router from "next/router";
 import NProgress from "nprogress";
-import { useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { Hydrate } from "react-query/hydration";
 
 import theme from "../theme";
 
@@ -24,25 +22,20 @@ Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
-const MyApp = ({ Component, pageProps }) => {
-  const queryClientRef = useRef();
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient();
-  }
+const queryClient = new QueryClient();
 
+const MyApp = ({ Component, pageProps }) => {
   const getLayout = Component.getLayout;
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
-      <Hydrate state={pageProps.dehydratedState}>
-        <ChakraProvider theme={theme} portalZIndex={1}>
-          {getLayout ? (
-            getLayout(<Component {...pageProps} />)
-          ) : (
-            <Component {...pageProps} />
-          )}
-        </ChakraProvider>
-      </Hydrate>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme} portalZIndex={1}>
+        {getLayout ? (
+          getLayout(<Component {...pageProps} />)
+        ) : (
+          <Component {...pageProps} />
+        )}
+      </ChakraProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

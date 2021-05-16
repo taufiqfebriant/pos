@@ -33,6 +33,14 @@ const Item = gql`
     createdAt: Sort!
   }
 
+  input ItemsNameInput {
+    startsWith: String!
+  }
+
+  input ItemsWhereInput {
+    name: ItemsNameInput!
+  }
+
   type Mutation {
     createItem(input: ItemInput!): Item
     deleteItem(id: Int!): Boolean
@@ -41,7 +49,12 @@ const Item = gql`
 
   type Query {
     item(where: ItemWhereInput!): Item
-    items(first: Int, after: String, orderBy: ItemOrderByInput): ItemConnection
+    items(
+      first: Int
+      after: String
+      orderBy: ItemOrderByInput
+      where: ItemsWhereInput
+    ): ItemConnection
   }
 `;
 

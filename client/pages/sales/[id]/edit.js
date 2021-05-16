@@ -40,6 +40,9 @@ const EditSale = () => {
   const router = useRouter();
   const [total, setTotal] = useState(0);
   const { data: sale } = useEditSale(router.query.id);
+  useEffect(() => {
+    console.log(sale);
+  }, [sale]);
 
   const { data: items } = useItems();
 
@@ -51,7 +54,7 @@ const EditSale = () => {
     watch,
   } = useForm({
     defaultValues: {
-      saleDetails: sale.saleDetails.map(saleDetail => ({
+      saleDetails: sale?.saleDetails.map(saleDetail => ({
         itemId: saleDetail.item.id,
         amount: saleDetail.amount,
       })),
@@ -79,7 +82,7 @@ const EditSale = () => {
   useEffect(() => {
     let total = 0;
 
-    watchAllFields.map(field => {
+    watchAllFields?.map(field => {
       if (field.itemId && field.amount) {
         const price = items.find(item => item.id === field.itemId).price;
         total += price * field.amount;

@@ -4,7 +4,7 @@ import { useMutation } from "react-query";
 import { client } from "../../utils/graphQLClient";
 
 const CREATE_SALE = gql`
-  mutation CreateSale($input: [SaleDetailInput!]!) {
+  mutation CreateSale($input: [SaleInput!]!) {
     createSale(input: $input) {
       id
     }

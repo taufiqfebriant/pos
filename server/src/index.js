@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import mercurius from "mercurius";
 import { PrismaClient } from "@prisma/client";
+import fastifyCors from "fastify-cors";
 import fastifyCookie from "fastify-cookie";
 import fastifySession from "@mgcrea/fastify-session";
 import RedisStore from "@mgcrea/fastify-session-redis-store";
@@ -11,6 +12,11 @@ import { resolvers } from "./resolvers";
 
 const app = Fastify();
 const prisma = new PrismaClient();
+
+app.register(fastifyCors, {
+  credentials: true,
+  origin: process.env.CLIENT_URL,
+});
 
 app.register(fastifyCookie);
 app.register(fastifySession, {
@@ -43,5 +49,5 @@ app.listen(4000, (err, address) => {
     process.exit(1);
   }
 
-  console.log(`Server ready at ${address}`);
+  console.log(`Server ready at ${address}/graphql`);
 });

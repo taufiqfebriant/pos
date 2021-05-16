@@ -16,7 +16,7 @@ const GET_EDIT_SALE = gql`
   }
 `;
 
-const getEditSaleKey = "editSale";
+const getEditSaleKey = id => ["editSale", id];
 
 const getEditSale = async ({ queryKey }) => {
   const [, id] = queryKey;
@@ -27,6 +27,6 @@ const getEditSale = async ({ queryKey }) => {
   return sale;
 };
 
-const useEditSale = id => useQuery([getEditSaleKey, id], getEditSale);
+const useEditSale = id => useQuery(getEditSaleKey(id), getEditSale);
 
 export { getEditSale, getEditSaleKey, useEditSale };

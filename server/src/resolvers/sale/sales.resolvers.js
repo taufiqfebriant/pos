@@ -1,4 +1,5 @@
 import { PrismaSelect } from "@paljs/plugins";
+import { Prisma } from "@prisma/client";
 import graphqlFields from "graphql-fields";
 
 export default {
@@ -19,15 +20,9 @@ export default {
           topLevelFields.includes("edges") ||
           topLevelFields.includes("pageInfo")
         ) {
-          let withSaleTotal = false;
           const select = new PrismaSelect(info).valueOf("edges.node", "Sale", {
             select: { id: true },
           });
-
-          if (select.select.total) {
-            delete select.select.total;
-            withSaleTotal = true;
-          }
 
           const sales = await prisma.sale.findMany({
             skip: after ? 1 : undefined,
@@ -42,13 +37,11 @@ export default {
             sales.pop();
           }
 
-          if (withSaleTotal) {
-            const saleIds = sales.map(sale => sale.id);
-            totals =
-              await prisma.$queryRaw`SELECT sale_id, SUM(amount * unit_price) as total FROM sale_details WHERE sale_id IN (${Prisma.join(
-                saleIds
-              )}) GROUP BY sale_id`;
-          }
+          const saleIds = sales.map(sale => sale.id);
+          totals =
+            await prisma.$queryRaw`SELECT sale_id, SUM(amount * unit_price) as total FROM sale_details WHERE sale_id IN (${Prisma.join(
+              saleIds
+            )}) GROUP BY sale_id`;
 
           edges = sales.map(sale => ({
             cursor: Buffer.from(
