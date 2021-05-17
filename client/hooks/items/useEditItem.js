@@ -25,4 +25,4 @@ const getEditItem = async ({ queryKey }) => {
 
 const useEditItem = id => useQuery(editItemKey(id), getEditItem);
 
-export { editItemKey, getEditItem, useEditItem };
+export { useEditItem };

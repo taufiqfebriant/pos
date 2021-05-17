@@ -30,7 +30,7 @@ const Item = gql`
   }
 
   input ItemOrderByInput {
-    createdAt: Sort!
+    id: Sort!
   }
 
   input ItemsNameInput {

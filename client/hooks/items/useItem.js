@@ -28,4 +28,4 @@ const getItem = async ({ queryKey }) => {
 
 const useItem = id => useQuery(getItemKey(id), getItem);
 
-export { getItemKey, getItem, useItem };
+export { useItem };

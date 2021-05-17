@@ -6,10 +6,6 @@ const Root = gql`
     desc
   }
 
-  input OrderByInput {
-    id: Sort!
-  }
-
   interface Node {
     id: ID!
   }

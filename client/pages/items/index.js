@@ -20,7 +20,7 @@ import { getLayout } from "../../components/Layout";
 import HeaderTitle from "../../components/HeaderTitle";
 import TdLink from "../../components/TdLink";
 
-const initialVariables = { first: 10, orderBy: { createdAt: "desc" } };
+const initialVariables = { first: 10, orderBy: { id: "desc" } };
 
 const Items = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =

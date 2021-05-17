@@ -67,7 +67,7 @@ const CreateItem = () => {
             </FormLabel>
             <Box w={7 / 8}>
               <Controller
-                defaultValue={undefined}
+                defaultValue={0}
                 control={control}
                 name="price"
                 render={({
@@ -77,7 +77,7 @@ const CreateItem = () => {
                   <NumberInput
                     onBlur={onBlur}
                     onChange={onChange}
-                    value={value}
+                    defaultValue={value}
                     variant="filled"
                     isInvalid={invalid}
                   >

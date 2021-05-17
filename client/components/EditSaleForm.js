@@ -26,7 +26,7 @@ import Combobox from "./Combobox";
 
 const defaultValue = {
   itemId: "",
-  amount: undefined,
+  amount: 0,
 };
 
 const EditSaleForm = ({ data }) => {
@@ -104,7 +104,7 @@ const EditSaleForm = ({ data }) => {
         register(`saleDetails.${index}.price`);
 
         return (
-          <HStack key={field.id} mt={index > 0 ? 4 : undefined} align="unset">
+          <HStack key={field.id} mt={index > 0 && 4} align="unset">
             <Controller
               defaultValue={field.itemId}
               control={control}

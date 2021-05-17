@@ -37,4 +37,4 @@ const useItems = (variables, options) => {
   return useInfiniteQuery(getItemsKey(variables), getItems, options);
 };
 
-export { getItems, getItemsKey, useItems };
+export { useItems };
