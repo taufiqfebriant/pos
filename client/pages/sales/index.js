@@ -44,7 +44,7 @@ const Sales = () => {
       </Header>
       <Box as="main" px="4" py="3">
         {isLoading ? (
-          <Center mt="4">
+          <Center>
             <Spinner />
           </Center>
         ) : (

@@ -6,10 +6,13 @@ import { client } from "../../utils/graphQLClient";
 const GET_EDIT_SALE = gql`
   query GetEditSale($where: SaleWhereInput!) {
     sale(where: $where) {
+      total
       saleDetails {
         amount
+        unitPrice
         item {
           id
+          name
         }
       }
     }

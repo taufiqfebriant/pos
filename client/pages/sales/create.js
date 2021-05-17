@@ -31,8 +31,7 @@ import HeaderTitle from "../../components/HeaderTitle";
 
 const defaultValue = {
   itemId: "",
-  amount: undefined,
-  price: 0,
+  amount: 0,
 };
 
 const CreateSale = () => {
@@ -44,6 +43,7 @@ const CreateSale = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
+    register,
     setValue,
   } = useForm({
     defaultValues: {
@@ -72,7 +72,7 @@ const CreateSale = () => {
     let total = 0;
 
     watchAllFields.map(field => {
-      if (field.itemId && field.amount) {
+      if (field.itemId && field.amount && field.price) {
         total += field.price * field.amount;
       }
     });
@@ -89,75 +89,78 @@ const CreateSale = () => {
       </Header>
       <Box as="main" px="4" py="3">
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-          {fields.map((field, index) => (
-            <HStack key={field.id} mt={index > 0 && 4} align="unset">
-              <Controller
-                defaultValue={field.itemId}
-                control={control}
-                name={`saleDetails.${index}.itemId`}
-                render={({
-                  field: { onChange, name },
-                  fieldState: { invalid, error },
-                }) => (
-                  <Combobox
-                    onChange={onChange}
-                    name={name}
-                    isInvalid={invalid}
-                    error={error}
-                    setPriceValue={setValue}
-                    index={index}
-                  />
-                )}
-              />
-              <FormControl
-                id={`saleDetails.${index}.amount`}
-                isInvalid={errors.saleDetails?.[index]?.amount}
-                w={4 / 12}
-              >
-                <FormLabel>Jumlah</FormLabel>
-                <HStack>
-                  <Controller
-                    defaultValue={field.amount}
-                    control={control}
-                    name={`saleDetails.${index}.amount`}
-                    render={({
-                      field: { onChange, onBlur, value },
-                      fieldState: { invalid },
-                    }) => (
-                      <NumberInput
-                        onBlur={onBlur}
-                        onChange={onChange}
-                        value={value}
-                        variant="filled"
-                        isInvalid={invalid}
-                        w={fields.length > 1 && 3 / 4}
-                      >
-                        <NumberInputField />
-                        <NumberInputStepper>
-                          <NumberIncrementStepper />
-                          <NumberDecrementStepper />
-                        </NumberInputStepper>
-                      </NumberInput>
-                    )}
-                  />
-                  {fields.length > 1 && (
-                    <IconButton
-                      colorScheme="gray"
-                      color="red.500"
-                      aria-label="Delete field"
-                      icon={<VscChromeClose />}
-                      _active={{ bg: "gray.100" }}
-                      w={1 / 4}
-                      onClick={() => remove(index)}
+          {fields.map((field, index) => {
+            register(`saleDetails.${index}.price`);
+
+            return (
+              <HStack key={field.id} mt={index > 0 && 4} align="unset">
+                <Controller
+                  defaultValue={field.itemId}
+                  control={control}
+                  name={`saleDetails.${index}.itemId`}
+                  render={({
+                    field: { onChange, name },
+                    fieldState: { invalid, error },
+                  }) => (
+                    <Combobox
+                      onChange={onChange}
+                      name={name}
+                      isInvalid={invalid}
+                      error={error}
+                      setValue={setValue}
                     />
                   )}
-                </HStack>
-                <FormErrorMessage>
-                  {errors.saleDetails?.[index]?.amount?.message}
-                </FormErrorMessage>
-              </FormControl>
-            </HStack>
-          ))}
+                />
+                <FormControl
+                  id={`saleDetails.${index}.amount`}
+                  isInvalid={errors.saleDetails?.[index]?.amount}
+                  w={4 / 12}
+                >
+                  <FormLabel>Jumlah</FormLabel>
+                  <HStack>
+                    <Controller
+                      defaultValue={field.amount}
+                      control={control}
+                      name={`saleDetails.${index}.amount`}
+                      render={({
+                        field: { onChange, onBlur, value },
+                        fieldState: { invalid },
+                      }) => (
+                        <NumberInput
+                          onBlur={onBlur}
+                          onChange={onChange}
+                          value={value}
+                          variant="filled"
+                          isInvalid={invalid}
+                          w={fields.length > 1 && 3 / 4}
+                        >
+                          <NumberInputField />
+                          <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
+                          </NumberInputStepper>
+                        </NumberInput>
+                      )}
+                    />
+                    {fields.length > 1 && (
+                      <IconButton
+                        colorScheme="gray"
+                        color="red.500"
+                        aria-label="Delete field"
+                        icon={<VscChromeClose />}
+                        _active={{ bg: "gray.100" }}
+                        w={1 / 4}
+                        onClick={() => remove(index)}
+                      />
+                    )}
+                  </HStack>
+                  <FormErrorMessage>
+                    {errors.saleDetails?.[index]?.amount?.message}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
+            );
+          })}
           <Flex align="center" justify="space-between" mt="6">
             <Text fontSize="lg" fontWeight="medium">
               Total:{" "}

@@ -17,8 +17,8 @@ const Combobox = ({
   name,
   isInvalid,
   error,
-  setPriceValue,
-  index,
+  setValue,
+  initialSelectedItem,
 }) => {
   const [items, setItems] = useState([]);
   const [variables, setVariables] = useState({ first: 5 });
@@ -33,12 +33,18 @@ const Combobox = ({
     highlightedIndex,
     inputValue,
   } = useCombobox({
+    initialSelectedItem,
     id: name,
     items,
     itemToString: item => (item ? item.node.name : ""),
     onSelectedItemChange: ({ selectedItem }) => {
       onChange(selectedItem.node.id);
-      setPriceValue(`saleDetails.${index}.price`, selectedItem.node.price);
+
+      const fieldName = name.split(".");
+      setValue(
+        `${fieldName[0]}.${fieldName[1]}.price`,
+        selectedItem.node.price
+      );
     },
   });
 

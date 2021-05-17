@@ -53,7 +53,7 @@ const Sale = () => {
       </Header>
       <Box as="main" px="4" py="3">
         {saleIsLoading ? (
-          <Center mt="4">
+          <Center>
             <Spinner />
           </Center>
         ) : (
