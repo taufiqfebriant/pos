@@ -40,8 +40,13 @@ async function main() {
       where: { id: itemId2 },
     });
 
+    const date = new Date();
+    date.setDate(date.getDate() - 1);
+
     await prisma.sale.create({
       data: {
+        createdAt: j <= 9 ? date : undefined,
+        updatedAt: j <= 9 ? date : undefined,
         saleDetails: {
           create: [
             { amount: amount1, itemId: itemId1, unitPrice: price1 },

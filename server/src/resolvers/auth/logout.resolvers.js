@@ -1,7 +1,7 @@
 export default {
   Mutation: {
-    logout: (_, {}, { request }) => {
-      request.session.delete();
+    logout: async (_, {}, { request }) => {
+      await request.session.destroy();
       return true;
     },
   },

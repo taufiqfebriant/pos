@@ -15,6 +15,7 @@
     "@paljs/plugins": "^3.2.0",
     "@prisma/client": "^2.22.1",
     "bcrypt": "^5.0.1",
+    "dayjs": "^1.10.4",
     "faker": "^5.5.3",
     "fastify": "^3.15.1",
     "fastify-cookie": "^5.3.1",

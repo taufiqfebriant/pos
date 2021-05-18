@@ -11,7 +11,9 @@ import { schema } from "./schema";
 import { resolvers } from "./resolvers";
 
 const app = Fastify();
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ["query"],
+});
 
 app.register(fastifyCors, {
   credentials: true,
@@ -22,13 +24,13 @@ app.register(fastifyCookie);
 app.register(fastifySession, {
   store: new RedisStore({
     client: new Redis(),
-    ttl: process.env.SESSION_MAX_AGE,
+    ttl: Number(process.env.SESSION_MAX_AGE),
   }),
   secret: process.env.SESSION_SECRET,
   cookieName: process.env.SESSION_NAME,
   saveUninitialized: false,
   cookie: {
-    maxAge: process.env.SESSION_MAX_AGE,
+    maxAge: Number(process.env.SESSION_MAX_AGE),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

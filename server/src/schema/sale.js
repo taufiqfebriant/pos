@@ -17,6 +17,9 @@ const Sale = gql`
   type SaleConnection {
     edges: [SaleEdge]!
     pageInfo: PageInfo!
+    totalCount: Int!
+    totalSum: Int!
+    totalItems: Int!
   }
 
   input SaleInput {
@@ -40,7 +43,13 @@ const Sale = gql`
 
   type Query {
     sale(where: SaleWhereInput!): Sale
-    sales(first: Int, after: String, orderBy: SaleOrderByInput): SaleConnection
+    sales(
+      first: Int
+      after: String
+      orderBy: SaleOrderByInput
+      gte: String
+      lt: String
+    ): SaleConnection
   }
 `;
 
