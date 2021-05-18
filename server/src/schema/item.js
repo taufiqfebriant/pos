@@ -17,7 +17,6 @@ const Item = gql`
   type ItemConnection {
     edges: [ItemEdge]!
     pageInfo: PageInfo!
-    totalCount: Int!
   }
 
   input ItemInput {

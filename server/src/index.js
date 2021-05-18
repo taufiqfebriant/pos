@@ -11,9 +11,7 @@ import { schema } from "./schema";
 import { resolvers } from "./resolvers";
 
 const app = Fastify();
-const prisma = new PrismaClient({
-  log: ["query"],
-});
+const prisma = new PrismaClient();
 
 app.register(fastifyCors, {
   credentials: true,

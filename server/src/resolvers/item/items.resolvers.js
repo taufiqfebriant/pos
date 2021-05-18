@@ -1,15 +1,15 @@
 import { PrismaSelect } from "@paljs/plugins";
-import graphqlFields from "graphql-fields";
+
+import { isEmptyObject } from "../../helpers";
 
 export default {
   Query: {
     items: async (_, { first, after, orderBy, where }, { prisma }, info) => {
       try {
-        let hasNextPage = false;
-        let edges = [],
-          totalCount,
-          endCursor;
-        const topLevelFields = Object.keys(graphqlFields(info));
+        let edges = [];
+        let endCursor = null;
+        const response = {};
+        const fields = new PrismaSelect(info).value;
 
         if (after) {
           after = parseInt(
@@ -17,29 +17,28 @@ export default {
           );
         }
 
-        if (
-          topLevelFields.includes("edges") ||
-          topLevelFields.includes("pageInfo")
-        ) {
+        if (fields.select.hasOwnProperty("edges")) {
+          let hasNextPage = false;
+
           const select = new PrismaSelect(info).valueOf("edges.node", "Item", {
             select: { id: true },
           });
 
           const items = await prisma.item.findMany({
-            skip: after && 1,
-            cursor: after && { id: after },
+            skip: after ? 1 : undefined,
+            cursor: after ? { id: after } : undefined,
             take: first + 1,
             orderBy,
             where,
             ...select,
           });
 
-          if (items.length > first) {
-            hasNextPage = true;
-            items.pop();
-          }
-
           if (items.length) {
+            if (items.length > first) {
+              hasNextPage = true;
+              items.pop();
+            }
+
             edges = items.map(item => ({
               cursor: Buffer.from(
                 `ItemConnection:${item.id.toString()}`
@@ -49,20 +48,17 @@ export default {
 
             endCursor = edges[edges.length - 1].cursor;
           }
+
+          Object.assign(response, {
+            edges,
+            pageInfo: {
+              endCursor,
+              hasNextPage,
+            },
+          });
         }
 
-        if (topLevelFields.includes("totalCount")) {
-          totalCount = await prisma.item.count();
-        }
-
-        return {
-          edges,
-          totalCount,
-          pageInfo: {
-            endCursor,
-            hasNextPage,
-          },
-        };
+        return isEmptyObject(response) ? null : response;
       } catch (err) {
         console.log(err);
       }
