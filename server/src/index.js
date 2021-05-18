@@ -1,13 +1,16 @@
-import Fastify from "fastify";
-import mercurius from "mercurius";
-import { PrismaClient } from "@prisma/client";
-import fastifyCors from "fastify-cors";
-import fastifyCookie from "fastify-cookie";
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import fastifySession from "@mgcrea/fastify-session";
 import RedisStore from "@mgcrea/fastify-session-redis-store";
+import { PrismaClient } from "@prisma/client";
+import Fastify from "fastify";
+import fastifyCookie from "fastify-cookie";
+import fastifyCors from "fastify-cors";
+import { applyMiddleware } from "graphql-middleware";
 import Redis from "ioredis";
+import mercurius from "mercurius";
 
-import { schema } from "./schema";
+import { typeDefs } from "./typeDefs";
+import { permissions } from "./permissions";
 import { resolvers } from "./resolvers";
 
 const app = Fastify();
@@ -36,8 +39,10 @@ app.register(fastifySession, {
 });
 
 app.register(mercurius, {
-  schema,
-  resolvers,
+  schema: applyMiddleware(
+    makeExecutableSchema({ typeDefs, resolvers }),
+    permissions
+  ),
   graphiql: "playground",
   jit: 1,
   context: request => ({ prisma, request }),

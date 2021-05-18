@@ -7,4 +7,4 @@ const typesArray = loadFilesSync(__dirname, {
   ignoreIndex: true,
 });
 
-export const schema = print(mergeTypeDefs(typesArray));
+export const typeDefs = print(mergeTypeDefs(typesArray));
