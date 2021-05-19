@@ -1,16 +1,12 @@
-import { shield, allow, rule, not } from "graphql-shield";
+import { mergeResolvers } from "@graphql-tools/merge";
+import { loadFilesSync } from "@graphql-tools/load-files";
+import { shield } from "graphql-shield";
+import path from "path";
 
-const isAuthenticated = rule()((_, {}, { request }) => {
-  return request.session.get("userId") !== undefined;
-});
+const resolversArray = loadFilesSync(path.join(__dirname, "./*/*.js"));
 
-export const permissions = shield({
-  Query: {
-    "*": isAuthenticated,
-    viewer: allow,
-  },
-  Mutation: {
-    "*": isAuthenticated,
-    login: not(isAuthenticated),
-  },
+const ruleTree = mergeResolvers(resolversArray);
+
+export const permissions = shield(ruleTree, {
+  allowExternalErrors: true,
 });
