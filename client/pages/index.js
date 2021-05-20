@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -19,6 +21,7 @@ import { schema } from "../schema/login";
 import { useViewer } from "../hooks/auth/useViewer";
 
 const Login = () => {
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { data, isLoading: viewerIsLoading, isFetching } = useViewer();
   const router = useRouter();
@@ -41,8 +44,16 @@ const Login = () => {
   const { mutateAsync, isLoading: loginIsLoading } = useLogin();
 
   const onSubmit = async input => {
-    const success = await mutateAsync({ input });
-    if (success) router.push("/dashboard");
+    try {
+      const success = await mutateAsync({ input });
+      if (success) router.push("/dashboard");
+    } catch (err) {
+      const {
+        response: { errors },
+      } = JSON.parse(JSON.stringify(err));
+
+      setError(errors[0].message);
+    }
   };
 
   if (loading) {
@@ -66,6 +77,12 @@ const Login = () => {
             mt="10"
             onSubmit={handleSubmit(onSubmit)}
           >
+            {error && (
+              <Alert status="error" mb="4">
+                <AlertIcon />
+                {error}
+              </Alert>
+            )}
             <FormControl id="username" isInvalid={errors.username}>
               <Input
                 placeholder="Nama pengguna"
@@ -74,11 +91,10 @@ const Login = () => {
               />
               <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
             </FormControl>
-            <FormControl id="password" isInvalid={errors.password}>
+            <FormControl id="password" isInvalid={errors.password} mt="4">
               <Input
                 type="password"
                 placeholder="Kata sandi"
-                mt="4"
                 {...register("password")}
                 variant="filled"
               />
