@@ -92,7 +92,7 @@ export default {
                 : undefined,
           });
 
-          Object.assign(response, { totalCount });
+          Object.assign(response, { totalCount: totalCount ?? 0 });
         }
 
         if (fields.select.totalSum) {
@@ -107,7 +107,7 @@ export default {
                 : Prisma.empty
             }`;
 
-          Object.assign(response, { totalSum: getTotalSum[0].totalSum });
+          Object.assign(response, { totalSum: getTotalSum[0].totalSum ?? 0 });
         }
 
         if (fields.select.totalItems) {
@@ -122,7 +122,9 @@ export default {
                 : Prisma.empty
             }`;
 
-          Object.assign(response, { totalItems: getTotalSum[0].totalItems });
+          Object.assign(response, {
+            totalItems: getTotalSum[0].totalItems ?? 0,
+          });
         }
 
         return isEmptyObject(response) ? null : response;
