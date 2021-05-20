@@ -41,7 +41,7 @@ DATABASE_URL="mysql://USERNAME:PASSWORD@HOST:PORT/DATABASE"
 SESSION_SECRET=
 # The name of the session ID cookie
 SESSION_NAME=
-# The duration of the session
+# The duration of the session (in seconds)
 SESSION_MAX_AGE=
 ```
 
