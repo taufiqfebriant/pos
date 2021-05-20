@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Center,
@@ -16,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import Header from "../../../components/Header";
@@ -28,6 +31,7 @@ import { useEditItem } from "../../../hooks/items/useEditItem";
 import { useUpdateItem } from "../../../hooks/items/useUpdateItem";
 
 const EditItem = () => {
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const { data, isLoading: editItemIsLoading } = useEditItem(router.query.id);
@@ -45,8 +49,16 @@ const EditItem = () => {
     useUpdateItem();
 
   const onSubmit = async input => {
-    const { id } = await updateItem({ id: parseInt(router.query.id), input });
-    if (id) router.push(`/items/${id}`);
+    try {
+      const { id } = await updateItem({ id: parseInt(router.query.id), input });
+      if (id) router.push(`/items/${id}`);
+    } catch (err) {
+      const {
+        response: { errors },
+      } = JSON.parse(JSON.stringify(err));
+
+      setError(errors[0].message);
+    }
   };
 
   return (
@@ -57,6 +69,12 @@ const EditItem = () => {
         <HeaderTitle>Edit Barang</HeaderTitle>
       </Header>
       <Box as="main" px="4" py="3">
+        {error && (
+          <Alert status="error" mb="4">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
         {editItemIsLoading ? (
           <Center>
             <Spinner />

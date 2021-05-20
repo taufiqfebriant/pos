@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -14,6 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import Header from "../../components/Header";
@@ -25,6 +28,7 @@ import { schema } from "../../schema/item";
 import { useCreateItem } from "../../hooks/items/useCreateItem";
 
 const CreateItem = () => {
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const {
@@ -39,8 +43,16 @@ const CreateItem = () => {
   const { mutateAsync, isLoading } = useCreateItem();
 
   const onSubmit = async input => {
-    const { id } = await mutateAsync({ input });
-    if (id) router.push(`/items/${id}`);
+    try {
+      const { id } = await mutateAsync({ input });
+      if (id) router.push(`/items/${id}`);
+    } catch (err) {
+      const {
+        response: { errors },
+      } = JSON.parse(JSON.stringify(err));
+
+      setError(errors[0].message);
+    }
   };
 
   return (
@@ -51,6 +63,12 @@ const CreateItem = () => {
         <HeaderTitle>Tambah Barang</HeaderTitle>
       </Header>
       <Box as="main" px="4" py="3">
+        {error && (
+          <Alert status="error" mb="4">
+            <AlertIcon />
+            {error}
+          </Alert>
+        )}
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           <FormControl id="name" d="flex" isInvalid={errors.name}>
             <FormLabel mt="2" mb="0" mr="0" w={1 / 8}>
