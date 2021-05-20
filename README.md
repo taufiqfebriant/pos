@@ -6,7 +6,7 @@ Simple POS application
 
 **Client:** Next.js, Chakra UI, React Query, React Hook Form
 
-**Server:** Node.js, Mercurius, Redis, Prisma
+**Server:** Node.js, MySQL, Mercurius, Redis, Prisma
 
   
 ## Run Locally
