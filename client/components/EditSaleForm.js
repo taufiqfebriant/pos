@@ -7,6 +7,7 @@ import {
   FormLabel,
   HStack,
   IconButton,
+  Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -59,7 +60,7 @@ const EditSaleForm = ({ data }) => {
   const { mutateAsync, isLoading } = useUpdateSale();
 
   const onSubmit = async ({ saleDetails }) => {
-    const input = saleDetails.map(({ price, ...rest }) => rest);
+    const input = saleDetails.map(({ price, subTotal, ...rest }) => rest);
 
     const { id } = await mutateAsync({
       id: parseInt(router.query.id),
@@ -73,14 +74,19 @@ const EditSaleForm = ({ data }) => {
   useEffect(() => {
     let total = 0;
 
-    watchAllFields.map(field => {
+    watchAllFields.map((field, index) => {
       if (field.itemId && field.amount) {
-        total += field.price * field.amount;
+        const subTotal = field.price * field.amount;
+
+        if (field.subTotal !== subTotal) {
+          setValue(`saleDetails.${index}.subTotal`, subTotal);
+        }
+        total += subTotal;
       }
     });
 
     setTotal(total);
-  }, [watchAllFields]);
+  }, [watchAllFields, setValue]);
 
   const initialSelectedItem = itemId => {
     const saleDetail = data.saleDetails.filter(
@@ -102,6 +108,7 @@ const EditSaleForm = ({ data }) => {
     <Box as="form" onSubmit={handleSubmit(onSubmit)}>
       {fields.map((field, index) => {
         register(`saleDetails.${index}.price`);
+        register(`saleDetails.${index}.subTotal`);
 
         return (
           <HStack key={field.id} mt={index > 0 && 4} align="unset">
@@ -126,33 +133,47 @@ const EditSaleForm = ({ data }) => {
             <FormControl
               id={`saleDetails.${index}.amount`}
               isInvalid={errors.saleDetails?.[index]?.amount}
-              w={4 / 12}
+              w={2 / 12}
             >
               <FormLabel>Jumlah</FormLabel>
+              <Controller
+                defaultValue={field.amount}
+                control={control}
+                name={`saleDetails.${index}.amount`}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { invalid },
+                }) => (
+                  <NumberInput
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    value={value}
+                    variant="filled"
+                    isInvalid={invalid}
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+              <FormErrorMessage>
+                {errors.saleDetails?.[index]?.amount?.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl w={3 / 12}>
+              <FormLabel>Subtotal</FormLabel>
               <HStack>
-                <Controller
-                  defaultValue={field.amount}
-                  control={control}
-                  name={`saleDetails.${index}.amount`}
-                  render={({
-                    field: { onChange, onBlur, value },
-                    fieldState: { invalid },
-                  }) => (
-                    <NumberInput
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      value={value}
-                      variant="filled"
-                      isInvalid={invalid}
-                      w={fields.length > 1 && 3 / 4}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  )}
+                <Input
+                  variant="filled"
+                  isReadOnly
+                  value={new Intl.NumberFormat("id", {
+                    style: "currency",
+                    currency: "IDR",
+                    minimumFractionDigits: 0,
+                  }).format(watch(`saleDetails.${index}.subTotal`) || 0)}
                 />
                 {fields.length > 1 && (
                   <IconButton
@@ -166,9 +187,6 @@ const EditSaleForm = ({ data }) => {
                   />
                 )}
               </HStack>
-              <FormErrorMessage>
-                {errors.saleDetails?.[index]?.amount?.message}
-              </FormErrorMessage>
             </FormControl>
           </HStack>
         );

@@ -68,7 +68,7 @@ const Combobox = ({
   }, [data?.edges, isLoading]);
 
   return (
-    <Box w={8 / 12}>
+    <Box w={7 / 12}>
       <FormControl isInvalid={isInvalid}>
         <FormLabel {...getLabelProps()}>Barang</FormLabel>
         <Box {...getComboboxProps()}>
