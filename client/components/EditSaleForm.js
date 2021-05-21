@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { VscAdd, VscChromeClose } from "react-icons/vsc";
+import { useQueryClient } from "react-query";
+import { getEditSaleKey } from "../hooks/sales/useEditSale";
 
 import { useUpdateSale } from "../hooks/sales/useUpdateSale";
 import { schema } from "../schema/saleDetails";
@@ -33,6 +35,7 @@ const defaultValue = {
 const EditSaleForm = ({ data }) => {
   const router = useRouter();
   const [total, setTotal] = useState(data.total);
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -66,7 +69,10 @@ const EditSaleForm = ({ data }) => {
       id: parseInt(router.query.id),
       input,
     });
-    if (id) router.push(`/sales/${id}`);
+    if (id) {
+      await queryClient.invalidateQueries(getEditSaleKey(id));
+      router.push(`/sales/${id}`);
+    }
   };
 
   const watchAllFields = watch(`saleDetails`);

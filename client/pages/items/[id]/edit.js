@@ -9,31 +9,33 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Spinner,
   Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
 import { getLayout } from "../../../components/Layout";
+import NumberInput from "../../../components/NumberInput";
 import Title from "../../../components/Title";
 import { schema } from "../../../schema/item";
-import { useEditItem } from "../../../hooks/items/useEditItem";
+import { getEditItemKey, useEditItem } from "../../../hooks/items/useEditItem";
 import { useUpdateItem } from "../../../hooks/items/useUpdateItem";
+
+const NumberInputProps = {
+  variant: "filled",
+};
 
 const EditItem = () => {
   const [error, setError] = useState("");
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data, isLoading: editItemIsLoading } = useEditItem(router.query.id);
 
@@ -52,7 +54,11 @@ const EditItem = () => {
   const onSubmit = async input => {
     try {
       const { id } = await updateItem({ id: parseInt(router.query.id), input });
-      if (id) router.push(`/items/${id}`);
+
+      if (id) {
+        await queryClient.invalidateQueries(getEditItemKey(id));
+        router.push(`/items/${id}`);
+      }
     } catch (err) {
       const {
         response: { errors },
@@ -100,7 +106,13 @@ const EditItem = () => {
                 Harga
               </FormLabel>
               <Box w={7 / 8}>
-                <Controller
+                <NumberInput
+                  control={control}
+                  name="price"
+                  defaultValue={data.price}
+                  inputProps={NumberInputProps}
+                />
+                {/* <Controller
                   defaultValue={data.price}
                   control={control}
                   name="price"
@@ -122,7 +134,7 @@ const EditItem = () => {
                       </NumberInputStepper>
                     </NumberInput>
                   )}
-                />
+                /> */}
                 <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
               </Box>
             </FormControl>

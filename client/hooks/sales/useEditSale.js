@@ -32,4 +32,4 @@ const getEditSale = async ({ queryKey }) => {
 
 const useEditSale = id => useQuery(getEditSaleKey(id), getEditSale);
 
-export { getEditSale, getEditSaleKey, useEditSale };
+export { getEditSaleKey, useEditSale };
