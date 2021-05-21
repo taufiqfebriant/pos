@@ -1,4 +1,4 @@
-import { Box, Center, Spinner } from "@chakra-ui/react";
+import { Box, Center, Spinner, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 import Title from "../../../components/Title";
@@ -26,8 +26,10 @@ const EditSale = () => {
           <Center>
             <Spinner />
           </Center>
-        ) : (
+        ) : data ? (
           <EditSaleForm data={data} />
+        ) : (
+          <Text align="center">Tidak ada data</Text>
         )}
       </Box>
     </>

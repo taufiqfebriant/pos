@@ -15,6 +15,7 @@ import {
   NumberInputField,
   NumberInputStepper,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/router";
@@ -79,7 +80,7 @@ const EditItem = () => {
           <Center>
             <Spinner />
           </Center>
-        ) : (
+        ) : data ? (
           <Box as="form" onSubmit={handleSubmit(onSubmit)}>
             <FormControl id="name" d="flex" isInvalid={errors.name}>
               <FormLabel mt="2" mb="0" mr="0" w={1 / 8}>
@@ -135,6 +136,8 @@ const EditItem = () => {
               </Button>
             </Flex>
           </Box>
+        ) : (
+          <Text align="center">Tidak ada data</Text>
         )}
       </Box>
     </>

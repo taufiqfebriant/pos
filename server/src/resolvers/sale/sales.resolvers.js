@@ -53,12 +53,12 @@ export default {
                   saleIds
                 )}) GROUP BY sale_id`;
 
-              if (totals) {
+              if (totals.length) {
                 edges = edges.map(edge => ({
                   cursor: edge.cursor,
                   node: {
                     ...edge.node,
-                    total: totals.find(el => el.sale_id === node.id).total,
+                    total: totals.find(el => el.sale_id === edge.node.id).total,
                   },
                 }));
               }

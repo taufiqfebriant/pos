@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -44,7 +44,7 @@ const Item = () => {
           <Center>
             <Spinner />
           </Center>
-        ) : (
+        ) : data ? (
           <>
             <Flex align="center" justify="space-between">
               <Heading size="lg">{data.name}</Heading>
@@ -78,6 +78,8 @@ const Item = () => {
               </Box>
             </Box>
           </>
+        ) : (
+          <Text align="center">Tidak ada data</Text>
         )}
       </Box>
     </>

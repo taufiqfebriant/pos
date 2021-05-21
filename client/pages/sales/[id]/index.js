@@ -7,6 +7,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Tfoot,
   Th,
   Thead,
@@ -39,7 +40,7 @@ const Sale = () => {
 
   return (
     <>
-      <Title title={`Penjualan #${data?.id}`} />
+      <Title title={data ? `Penjualan #${data?.id}` : "Tidak ada data"} />
       <DeleteAlert
         title="Hapus Penjualan"
         isLoading={deleteSaleIsLoading}
@@ -56,7 +57,7 @@ const Sale = () => {
           <Center>
             <Spinner />
           </Center>
-        ) : (
+        ) : data ? (
           <>
             <Flex align="center" justify="space-between">
               <Heading size="lg">Penjualan #{data.id}</Heading>
@@ -126,6 +127,8 @@ const Sale = () => {
               </Table>
             </Box>
           </>
+        ) : (
+          <Text align="center">Tidak ada data</Text>
         )}
       </Box>
     </>
