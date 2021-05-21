@@ -6,6 +6,7 @@ import {
   Spinner,
   Table,
   Tbody,
+  Td,
   Th,
   Thead,
   Tr,
@@ -61,28 +62,36 @@ const Sales = () => {
               <Tbody>
                 {data.pages.map((page, index) => (
                   <Fragment key={index}>
-                    {page.edges.map(({ node }) => (
-                      <Tr key={node.id} _hover={{ background: "teal.50" }}>
-                        <TdLink href={`/sales/${node.id}`}>{node.id}</TdLink>
-                        <TdLink href={`/sales/${node.id}`}>
-                          {new Intl.NumberFormat("id", {
-                            style: "currency",
-                            currency: "IDR",
-                            minimumFractionDigits: 0,
-                          }).format(node.total)}
-                        </TdLink>
-                        <TdLink href={`/sales/${node.id}`}>
-                          {dayjs(Number(node.createdAt)).format(
-                            "DD MMMM YYYY HH:mm:ss"
-                          )}
-                        </TdLink>
-                        <TdLink href={`/sales/${node.id}`}>
-                          {dayjs(Number(node.updatedAt)).format(
-                            "DD MMMM YYYY HH:mm:ss"
-                          )}
-                        </TdLink>
+                    {page.edges.length ? (
+                      page.edges.map(({ node }) => (
+                        <Tr key={node.id} _hover={{ background: "teal.50" }}>
+                          <TdLink href={`/sales/${node.id}`}>{node.id}</TdLink>
+                          <TdLink href={`/sales/${node.id}`}>
+                            {new Intl.NumberFormat("id", {
+                              style: "currency",
+                              currency: "IDR",
+                              minimumFractionDigits: 0,
+                            }).format(node.total)}
+                          </TdLink>
+                          <TdLink href={`/sales/${node.id}`}>
+                            {dayjs(Number(node.createdAt)).format(
+                              "DD MMMM YYYY HH:mm:ss"
+                            )}
+                          </TdLink>
+                          <TdLink href={`/sales/${node.id}`}>
+                            {dayjs(Number(node.updatedAt)).format(
+                              "DD MMMM YYYY HH:mm:ss"
+                            )}
+                          </TdLink>
+                        </Tr>
+                      ))
+                    ) : (
+                      <Tr>
+                        <Td colSpan="4" textAlign="center">
+                          Tidak ada data
+                        </Td>
                       </Tr>
-                    ))}
+                    )}
                   </Fragment>
                 ))}
               </Tbody>

@@ -6,6 +6,7 @@ import {
   Spinner,
   Table,
   Tbody,
+  Td,
   Th,
   Thead,
   Tr,
@@ -58,12 +59,22 @@ const Items = () => {
               <Tbody>
                 {data.pages.map((page, index) => (
                   <Fragment key={index}>
-                    {page.edges.map(({ node }) => (
-                      <Tr key={node.id} _hover={{ background: "teal.50" }}>
-                        <TdLink href={`/items/${node.id}`}>{node.id}</TdLink>
-                        <TdLink href={`/items/${node.id}`}>{node.name}</TdLink>
+                    {page.edges.length ? (
+                      page.edges.map(({ node }) => (
+                        <Tr key={node.id} _hover={{ background: "teal.50" }}>
+                          <TdLink href={`/items/${node.id}`}>{node.id}</TdLink>
+                          <TdLink href={`/items/${node.id}`}>
+                            {node.name}
+                          </TdLink>
+                        </Tr>
+                      ))
+                    ) : (
+                      <Tr>
+                        <Td colSpan="2" textAlign="center">
+                          Tidak ada data
+                        </Td>
                       </Tr>
-                    ))}
+                    )}
                   </Fragment>
                 ))}
               </Tbody>

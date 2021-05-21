@@ -15,7 +15,7 @@ const Sale = gql`
   }
 
   type SaleConnection {
-    edges: [SaleEdge]!
+    edges: [SaleEdge!]!
     pageInfo: PageInfo!
     totalCount: Int!
     totalSum: Int!

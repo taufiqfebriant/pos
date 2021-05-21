@@ -46,21 +46,28 @@ export default {
 
           if (fields.select.edges.select.node.select.total) {
             const saleIds = sales.map(sale => sale.id);
-            const totals =
-              await prisma.$queryRaw`SELECT sale_id, SUM(amount * unit_price) as total FROM sale_details WHERE sale_id IN (${Prisma.join(
-                saleIds
-              )}) GROUP BY sale_id`;
 
-            edges = edges.map(({ cursor, node }) => ({
-              cursor,
-              node: {
-                ...node,
-                total: totals.find(el => el.sale_id === node.id).total,
-              },
-            }));
+            if (saleIds.length) {
+              const totals =
+                await prisma.$queryRaw`SELECT sale_id, SUM(amount * unit_price) as total FROM sale_details WHERE sale_id IN (${Prisma.join(
+                  saleIds
+                )}) GROUP BY sale_id`;
+
+              if (totals) {
+                edges = edges.map(edge => ({
+                  cursor: edge.cursor,
+                  node: {
+                    ...edge.node,
+                    total: totals.find(el => el.sale_id === node.id).total,
+                  },
+                }));
+              }
+            }
           }
 
-          const endCursor = edges[edges.length - 1].cursor;
+          const endCursor = edges.length
+            ? edges[edges.length - 1].cursor
+            : null;
 
           Object.assign(response, {
             edges,
