@@ -2,13 +2,20 @@
 # POS
 
 Simple POS application
+
 ## Tech Stack
 
 **Client:** Next.js, Chakra UI, React Query, React Hook Form
 
 **Server:** Node.js, MySQL, Mercurius, Redis, Prisma
 
-  
+## Prerequisites
+
+In order to run this app locally, you need:
+- Node.js installed on your machine
+- a MySQL database server running
+- a Redis server running
+
 ## Run Locally
 
 Clone the project
@@ -22,6 +29,8 @@ Go to the project directory
 ```bash
 cd pos
 ```
+
+### Server
 
 Install server dependencies
 
@@ -51,11 +60,19 @@ Generate and apply migrations
 npx prisma migrate dev
 ```
 
+Seed the database in order to create the default user
+
+```bash
+npx prisma db seed --preview-feature
+```
+
 Start the server
 
 ```bash
 npm run dev
 ```
+
+### Client
 
 Install client dependencies
 
@@ -76,4 +93,7 @@ Start the client
 npm run dev
 ```
 
-  
+## Default User
+**Username:** user
+
+**Password:** 12345678
