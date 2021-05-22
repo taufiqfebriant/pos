@@ -7,14 +7,13 @@ import {
 } from "@chakra-ui/react";
 import { useController } from "react-hook-form";
 
-const NumberInput = ({ control, name, defaultValue, inputProps }) => {
+const NumberInput = ({ control, name, inputProps }) => {
   const {
     field: { ref, ...fieldProps },
     fieldState: { invalid },
   } = useController({
     name,
     control,
-    defaultValue,
   });
 
   return (

@@ -1,36 +1,16 @@
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Center,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Spinner,
-  Text,
-} from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Alert, AlertIcon, Box, Center, Spinner, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
 import { getLayout } from "../../../components/Layout";
-import NumberInput from "../../../components/NumberInput";
 import Title from "../../../components/Title";
-import { schema } from "../../../schema/item";
 import { getEditItemKey, useEditItem } from "../../../hooks/items/useEditItem";
 import { useUpdateItem } from "../../../hooks/items/useUpdateItem";
-
-const NumberInputProps = {
-  variant: "filled",
-};
+import ItemForm from "../../../components/ItemForm";
 
 const EditItem = () => {
   const [error, setError] = useState("");
@@ -38,15 +18,6 @@ const EditItem = () => {
   const queryClient = useQueryClient();
 
   const { data, isLoading: editItemIsLoading } = useEditItem(router.query.id);
-
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
 
   const { mutateAsync: updateItem, isLoading: updateItemIsLoading } =
     useUpdateItem();
@@ -87,67 +58,14 @@ const EditItem = () => {
             <Spinner />
           </Center>
         ) : data ? (
-          <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-            <FormControl id="name" d="flex" isInvalid={errors.name}>
-              <FormLabel mt="2" mb="0" mr="0" w={1 / 8}>
-                Nama
-              </FormLabel>
-              <Box w={7 / 8}>
-                <Input
-                  variant="filled"
-                  defaultValue={data.name}
-                  {...register("name")}
-                />
-                <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-              </Box>
-            </FormControl>
-            <FormControl id="price" isInvalid={errors.price} d="flex" mt="4">
-              <FormLabel mt="2" mb="0" mr="0" w={1 / 8}>
-                Harga
-              </FormLabel>
-              <Box w={7 / 8}>
-                <NumberInput
-                  control={control}
-                  name="price"
-                  defaultValue={data.price}
-                  inputProps={NumberInputProps}
-                />
-                {/* <Controller
-                  defaultValue={data.price}
-                  control={control}
-                  name="price"
-                  render={({
-                    field: { onChange, onBlur, value },
-                    fieldState: { invalid },
-                  }) => (
-                    <NumberInput
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      defaultValue={value}
-                      variant="filled"
-                      isInvalid={invalid}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  )}
-                /> */}
-                <FormErrorMessage>{errors.price?.message}</FormErrorMessage>
-              </Box>
-            </FormControl>
-            <Flex justify="flex-end">
-              <Button
-                type="submit"
-                mt="6"
-                isLoading={isSubmitting || updateItemIsLoading}
-              >
-                Perbarui
-              </Button>
-            </Flex>
-          </Box>
+          <ItemForm
+            defaultValues={{
+              name: data.name,
+              price: data.price,
+            }}
+            isLoading={updateItemIsLoading}
+            onSubmit={onSubmit}
+          />
         ) : (
           <Text align="center">Tidak ada data</Text>
         )}

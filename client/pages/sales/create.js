@@ -8,11 +8,6 @@ import {
   HStack,
   IconButton,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -29,6 +24,11 @@ import Combobox from "../../components/Combobox";
 import Header from "../../components/Header";
 import HeaderBackButton from "../../components/HeaderBackButton";
 import HeaderTitle from "../../components/HeaderTitle";
+import NumberInput from "../../components/NumberInput";
+
+const NumberInputProps = {
+  variant: "filled",
+};
 
 const defaultValue = {
   itemId: "",
@@ -124,7 +124,13 @@ const CreateSale = () => {
                   w={2 / 12}
                 >
                   <FormLabel>Jumlah</FormLabel>
-                  <Controller
+                  <NumberInput
+                    control={control}
+                    name={`saleDetails.${index}.amount`}
+                    defaultValue={field.amount}
+                    inputProps={NumberInputProps}
+                  />
+                  {/* <Controller
                     defaultValue={field.amount}
                     control={control}
                     name={`saleDetails.${index}.amount`}
@@ -146,7 +152,7 @@ const CreateSale = () => {
                         </NumberInputStepper>
                       </NumberInput>
                     )}
-                  />
+                  /> */}
                   <FormErrorMessage>
                     {errors.saleDetails?.[index]?.amount?.message}
                   </FormErrorMessage>
