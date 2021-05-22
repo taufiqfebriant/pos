@@ -43,12 +43,9 @@ const CreateItem = () => {
           </Alert>
         )}
         <ItemForm
-          defaultValues={{
-            name: "",
-            price: 0,
-          }}
           isLoading={isLoading}
           onSubmit={onSubmit}
+          buttonText="Simpan"
         />
       </Box>
     </>

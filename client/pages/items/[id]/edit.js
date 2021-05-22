@@ -65,6 +65,7 @@ const EditItem = () => {
             }}
             isLoading={updateItemIsLoading}
             onSubmit={onSubmit}
+            buttonText="Perbarui"
           />
         ) : (
           <Text align="center">Tidak ada data</Text>

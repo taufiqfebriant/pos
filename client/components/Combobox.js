@@ -9,19 +9,21 @@ import {
 } from "@chakra-ui/react";
 import { useCombobox } from "downshift";
 import { useEffect, useState } from "react";
+import { useController } from "react-hook-form";
 
 import { useItemSearch } from "../hooks/items/useItemSearch";
 
-const Combobox = ({
-  onChange,
-  name,
-  isInvalid,
-  error,
-  setValue,
-  initialSelectedItem,
-}) => {
+const Combobox = ({ control, name, initialSelectedItem, setValue }) => {
   const [items, setItems] = useState([]);
   const [variables, setVariables] = useState({ first: 5 });
+
+  const {
+    field: { onChange },
+    fieldState: { error },
+  } = useController({
+    name,
+    control,
+  });
 
   const {
     isOpen,
@@ -36,7 +38,7 @@ const Combobox = ({
     initialSelectedItem,
     id: name,
     items,
-    itemToString: item => (item ? item.node.name : ""),
+    itemToString: item => item.node.name || "",
     onSelectedItemChange: ({ selectedItem }) => {
       onChange(selectedItem.node.id);
 
@@ -68,8 +70,8 @@ const Combobox = ({
   }, [data?.edges, isLoading]);
 
   return (
-    <Box w={7 / 12}>
-      <FormControl isInvalid={isInvalid}>
+    <>
+      <FormControl isInvalid={error}>
         <FormLabel {...getLabelProps()}>Barang</FormLabel>
         <Box {...getComboboxProps()}>
           <Input variant="filled" {...getInputProps()} />
@@ -77,8 +79,9 @@ const Combobox = ({
         <FormErrorMessage>{error?.message}</FormErrorMessage>
       </FormControl>
       <List {...getMenuProps()} bg="gray.100">
-        {isOpen &&
-          inputValue &&
+        {inputValue &&
+          items.length &&
+          isOpen &&
           items.map((edge, index) => (
             <ListItem
               key={edge.node.id}
@@ -92,7 +95,7 @@ const Combobox = ({
             </ListItem>
           ))}
       </List>
-    </Box>
+    </>
   );
 };
 

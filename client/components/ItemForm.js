@@ -17,7 +17,7 @@ const NumberInputProps = {
   variant: "filled",
 };
 
-const ItemForm = ({ defaultValues, isLoading, onSubmit }) => {
+const ItemForm = ({ defaultValues, isLoading, onSubmit, buttonText }) => {
   const {
     control,
     register,
@@ -54,7 +54,7 @@ const ItemForm = ({ defaultValues, isLoading, onSubmit }) => {
       </FormControl>
       <Flex justify="flex-end">
         <Button type="submit" mt="6" isLoading={isSubmitting || isLoading}>
-          Simpan
+          {buttonText}
         </Button>
       </Flex>
     </Box>

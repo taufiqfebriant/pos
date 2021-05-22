@@ -8,48 +8,40 @@ import {
   HStack,
   IconButton,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { VscAdd, VscChromeClose } from "react-icons/vsc";
-import { useQueryClient } from "react-query";
-import { getEditSaleKey } from "../hooks/sales/useEditSale";
 
-import { useUpdateSale } from "../hooks/sales/useUpdateSale";
-import { schema } from "../schema/saleDetails";
 import Combobox from "./Combobox";
+import NumberInput from "./NumberInput";
+import { schema } from "../schema/saleDetails";
+
+const NumberInputProps = {
+  variant: "filled",
+};
 
 const defaultValue = {
   itemId: "",
-  amount: 0,
+  amount: undefined,
 };
 
-const EditSaleForm = ({ data }) => {
-  const router = useRouter();
-  const [total, setTotal] = useState(data.total);
-  const queryClient = useQueryClient();
+const SaleForm = ({ onSubmit, defaultValues, isLoading }) => {
+  const [total, setTotal] = useState(0);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
-    setValue,
     register,
+    setValue,
   } = useForm({
     defaultValues: {
-      saleDetails: data.saleDetails.map(saleDetail => ({
-        itemId: saleDetail.item.id,
-        amount: saleDetail.amount,
-        price: saleDetail.unitPrice,
+      saleDetails: defaultValues.map(({ name, ...rest }) => ({
+        ...rest,
       })),
     },
     resolver: yupResolver(schema),
@@ -60,33 +52,19 @@ const EditSaleForm = ({ data }) => {
     name: "saleDetails",
   });
 
-  const { mutateAsync, isLoading } = useUpdateSale();
-
-  const onSubmit = async ({ saleDetails }) => {
-    const input = saleDetails.map(({ price, subTotal, ...rest }) => rest);
-
-    const { id } = await mutateAsync({
-      id: parseInt(router.query.id),
-      input,
-    });
-    if (id) {
-      await queryClient.invalidateQueries(getEditSaleKey(id));
-      router.push(`/sales/${id}`);
-    }
-  };
-
-  const watchAllFields = watch(`saleDetails`);
+  const watchAllFields = watch("saleDetails");
 
   useEffect(() => {
     let total = 0;
 
     watchAllFields.map((field, index) => {
-      if (field.itemId && field.amount) {
+      if (field.itemId && field.amount && field.price) {
         const subTotal = field.price * field.amount;
 
         if (field.subTotal !== subTotal) {
           setValue(`saleDetails.${index}.subTotal`, subTotal);
         }
+
         total += subTotal;
       }
     });
@@ -95,17 +73,17 @@ const EditSaleForm = ({ data }) => {
   }, [watchAllFields, setValue]);
 
   const initialSelectedItem = itemId => {
-    const saleDetail = data.saleDetails.filter(
-      saleDetail => saleDetail.item.id === itemId
+    const saleDetail = defaultValues.filter(
+      defaultValue => defaultValue.itemId === itemId
     );
 
     if (!saleDetail.length) return null;
 
     return {
       node: {
-        id: saleDetail[0].item.id,
-        name: saleDetail[0].item.name,
-        price: saleDetail[0].unitPrice,
+        id: saleDetail[0].itemId,
+        name: saleDetail[0].name,
+        price: saleDetail[0].price,
       },
     };
   };
@@ -118,52 +96,25 @@ const EditSaleForm = ({ data }) => {
 
         return (
           <HStack key={field.id} mt={index > 0 && 4} align="unset">
-            <Controller
-              defaultValue={field.itemId}
-              control={control}
-              name={`saleDetails.${index}.itemId`}
-              render={({
-                field: { onChange, name },
-                fieldState: { invalid, error },
-              }) => (
-                <Combobox
-                  onChange={onChange}
-                  name={name}
-                  isInvalid={invalid}
-                  error={error}
-                  setValue={setValue}
-                  initialSelectedItem={initialSelectedItem(field.itemId)}
-                />
-              )}
-            />
+            <Box w={7 / 12}>
+              <Combobox
+                control={control}
+                name={`saleDetails.${index}.itemId`}
+                setValue={setValue}
+                initialSelectedItem={initialSelectedItem(field.itemId)}
+              />
+            </Box>
             <FormControl
               id={`saleDetails.${index}.amount`}
               isInvalid={errors.saleDetails?.[index]?.amount}
               w={2 / 12}
             >
               <FormLabel>Jumlah</FormLabel>
-              <Controller
-                defaultValue={field.amount}
+              <NumberInput
                 control={control}
                 name={`saleDetails.${index}.amount`}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { invalid },
-                }) => (
-                  <NumberInput
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    value={value}
-                    variant="filled"
-                    isInvalid={invalid}
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
+                defaultValue={field.amount}
+                inputProps={NumberInputProps}
               />
               <FormErrorMessage>
                 {errors.saleDetails?.[index]?.amount?.message}
@@ -224,4 +175,4 @@ const EditSaleForm = ({ data }) => {
   );
 };
 
-export default EditSaleForm;
+export default SaleForm;

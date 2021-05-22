@@ -3,16 +3,32 @@ import { useRouter } from "next/router";
 
 import Title from "../../../components/Title";
 import { getLayout } from "../../../components/Layout";
-import { useEditSale } from "../../../hooks/sales/useEditSale";
+import { getEditSaleKey, useEditSale } from "../../../hooks/sales/useEditSale";
 import Header from "../../../components/Header";
 import HeaderBackButton from "../../../components/HeaderBackButton";
 import HeaderTitle from "../../../components/HeaderTitle";
-import EditSaleForm from "../../../components/EditSaleForm";
+import SaleForm from "../../../components/SaleForm";
+import { useUpdateSale } from "../../../hooks/sales/useUpdateSale";
+import { useQueryClient } from "react-query";
 
 const EditSale = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data, isLoading: editSaleIsLoading } = useEditSale(router.query.id);
 
-  const { data, isLoading } = useEditSale(router.query.id);
+  const { mutateAsync, isLoading: updateSaleIsLoading } = useUpdateSale();
+  const onSubmit = async ({ saleDetails }) => {
+    const input = saleDetails.map(({ price, subTotal, ...rest }) => rest);
+
+    const { id } = await mutateAsync({
+      id: parseInt(router.query.id),
+      input,
+    });
+    if (id) {
+      await queryClient.invalidateQueries(getEditSaleKey(id));
+      router.push(`/sales/${id}`);
+    }
+  };
 
   return (
     <>
@@ -22,12 +38,22 @@ const EditSale = () => {
         <HeaderTitle>Edit Penjualan</HeaderTitle>
       </Header>
       <Box as="main" px="4" py="3">
-        {isLoading ? (
+        {editSaleIsLoading ? (
           <Center>
             <Spinner />
           </Center>
         ) : data ? (
-          <EditSaleForm data={data} />
+          <SaleForm
+            defaultValues={data.saleDetails.map(saleDetail => ({
+              itemId: saleDetail.item.id,
+              name: saleDetail.item.name,
+              amount: saleDetail.amount,
+              price: saleDetail.unitPrice,
+              subTotal: saleDetail.unitPrice * saleDetail.amount,
+            }))}
+            isLoading={updateSaleIsLoading}
+            onSubmit={onSubmit}
+          />
         ) : (
           <Text align="center">Tidak ada data</Text>
         )}
