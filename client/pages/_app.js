@@ -36,7 +36,7 @@ const MyApp = ({ Component, pageProps }) => {
           <Component {...pageProps} />
         )}
       </ChakraProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools /> */}
     </QueryClientProvider>
   );
 };

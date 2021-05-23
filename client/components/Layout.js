@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <Container maxW="container.lg" px="0" d="flex">
+    <Container maxW="container.lg" d="flex" px="0">
       <Nav />
       <Box borderWidth="0 thin" w="full" ref={ref}>
         {children}

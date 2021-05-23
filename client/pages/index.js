@@ -71,7 +71,7 @@ const Login = () => {
         <Box>
           <Heading size="4xl">{process.env.NEXT_PUBLIC_APP_NAME}</Heading>
           <Box
-            w="360px"
+            maxW="360px"
             mx="auto"
             as="form"
             mt="10"

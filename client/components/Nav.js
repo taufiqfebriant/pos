@@ -3,14 +3,18 @@ import {
   Button,
   Center,
   Flex,
+  HStack,
   Icon,
+  Image,
   Link,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Spinner,
+  Text,
   UnorderedList,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -26,6 +30,7 @@ import {
 import NavLink from "./NavLink";
 import { useLogout } from "../hooks/auth/useLogout";
 import { useViewer } from "../hooks/auth/useViewer";
+import { mediaQueries } from "../utils/mediaQueries";
 
 const activeProps = {
   color: "green.500",
@@ -33,6 +38,8 @@ const activeProps = {
 
 const Nav = () => {
   const router = useRouter();
+
+  const [isLg] = useMediaQuery(mediaQueries.lg);
 
   const { data } = useViewer();
 
@@ -44,17 +51,12 @@ const Nav = () => {
   };
 
   return (
-    <Box as="aside" pt="2.5" pb="6" px="3" position="sticky" top="0" h="100vh">
+    <Box as="aside" position="sticky" top="0" h="100vh" pt="2" pb="6" px="4">
       <Flex direction="column" justify="space-between" h="full">
         <Box>
-          <NextLink href="/" passHref>
-            <Link
-              fontSize="2xl"
-              pl="4"
-              fontWeight="bold"
-              _hover={{ textDecoration: "none" }}
-            >
-              {process.env.NEXT_PUBLIC_APP_NAME}
+          <NextLink href="/dashboard" passHref>
+            <Link d="inline-block" ml="2.5">
+              <Image src="./logo.svg" boxSize="40px" />
             </Link>
           </NextLink>
           <Box as="nav">
@@ -88,15 +90,23 @@ const Nav = () => {
             <MenuButton
               as={Button}
               colorScheme="gray"
-              size="lg"
               variant="ghost"
-              leftIcon={<Icon as={VscPerson} boxSize="7" />}
-              rightIcon={<VscEllipsis />}
-              textAlign="left"
-              fontSize="md"
-              pl="4"
+              maxW="225px"
+              px="4"
+              py="2"
+              size="lg"
             >
-              {data.name}
+              <HStack spacing="4">
+                <Icon as={VscPerson} boxSize="7" />
+                {isLg && (
+                  <>
+                    <Text fontSize="sm" isTruncated>
+                      {data.name}
+                    </Text>
+                    <Icon as={VscEllipsis} boxSize="4" />
+                  </>
+                )}
+              </HStack>
             </MenuButton>
             <MenuList>
               <MenuItem icon={<VscSignOut />} onClick={logout}>
