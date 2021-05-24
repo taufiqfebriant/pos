@@ -1,9 +1,18 @@
-import { Box, Container, Flex, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Flex,
+  Portal,
+  Spinner,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
 import Nav from "./Nav";
+import ConditionalWrapper from "./ConditionalWrapper";
 import { useViewer } from "../hooks/auth/useViewer";
+import { mediaQueries } from "../utils/mediaQueries";
 
 const Layout = ({ children }) => {
   const ref = useRef();
@@ -13,6 +22,8 @@ const Layout = ({ children }) => {
   const { data, isLoading: viewerIsLoading, isFetching } = useViewer();
 
   const router = useRouter();
+
+  const [isSm] = useMediaQuery(mediaQueries.sm);
 
   useEffect(() => {
     if (viewerIsLoading || isFetching || data === undefined) return;
@@ -31,7 +42,12 @@ const Layout = ({ children }) => {
 
   return (
     <Container maxW="container.lg" d="flex" px="0">
-      <Nav />
+      <ConditionalWrapper
+        condition={!isSm}
+        wrapper={children => <Portal>{children}</Portal>}
+      >
+        <Nav />
+      </ConditionalWrapper>
       <Box borderWidth="0 thin" w="full" ref={ref}>
         {children}
       </Box>

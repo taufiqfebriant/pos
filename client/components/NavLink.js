@@ -7,19 +7,21 @@ import { mediaQueries } from "../utils/mediaQueries";
 const NavLink = ({ icon, children, href, activeProps }) => {
   const router = useRouter();
 
+  const [isMd] = useMediaQuery(mediaQueries.md);
   const [isLg] = useMediaQuery(mediaQueries.lg);
 
   const parentRoute = router.pathname.split("/")[1];
   const parentHref = href.split("/")[1];
 
   return (
-    <ListItem>
+    <ListItem flex={!isMd && "1"}>
       <NextLink href={href} passHref>
         <Link
           px="4"
           py="3"
           d="flex"
           alignItems="center"
+          justifyContent={!isMd && "center"}
           _hover={{
             textDecoration: "none",
             bg: "gray.100",

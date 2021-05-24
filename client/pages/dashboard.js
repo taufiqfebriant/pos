@@ -1,4 +1,4 @@
-import { Box, Center, Heading, HStack, Spinner } from "@chakra-ui/react";
+import { Box, Center, Grid, Heading, Spinner } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { MdAttachMoney } from "react-icons/md";
 import { VscGraph, VscPackage } from "react-icons/vsc";
@@ -32,7 +32,11 @@ const Dashboard = () => {
             <Spinner />
           </Center>
         ) : (
-          <HStack mt="4">
+          <Grid
+            templateColumns="repeat(auto-fit, minmax(225px, 1fr))"
+            gap="2"
+            mt="4"
+          >
             <InfoCard
               icon={VscGraph}
               title={data.sales.totalCount}
@@ -48,7 +52,7 @@ const Dashboard = () => {
               title={`Rp${abbreviateNumber(data.sales.totalSum)}`}
               description="Total pemasukan"
             />
-          </HStack>
+          </Grid>
         )}
       </Box>
     </>

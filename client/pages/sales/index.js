@@ -2,29 +2,31 @@ import {
   Box,
   Button,
   Center,
+  Flex,
+  Grid,
+  Heading,
   Link,
+  LinkBox,
+  LinkOverlay,
   Spinner,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
+  Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import NextLink from "next/link";
-import { Fragment } from "react";
 
 import Header from "../../components/Header";
 import HeaderTitle from "../../components/HeaderTitle";
 import Title from "../../components/Title";
 import { getLayout } from "../../components/Layout";
 import { useSales } from "../../hooks/sales/useSales";
-import TdLink from "../../components/TdLink";
+import { mediaQueries } from "../../utils/mediaQueries";
 
 const initialVariables = { first: 10, orderBy: { id: "desc" } };
 
 const Sales = () => {
+  const [isSm] = useMediaQuery(mediaQueries.sm);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useSales(initialVariables, {
       getNextPageParam: ({ pageInfo }) => {
@@ -49,54 +51,51 @@ const Sales = () => {
             <Spinner />
           </Center>
         ) : (
-          <Box borderWidth="thin">
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>No. Penjualan</Th>
-                  <Th>Total</Th>
-                  <Th>Dibuat pada</Th>
-                  <Th>Diperbarui pada</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {data.pages.map((page, index) => (
-                  <Fragment key={index}>
-                    {page.edges.length ? (
-                      page.edges.map(({ node }) => (
-                        <Tr key={node.id} _hover={{ background: "teal.50" }}>
-                          <TdLink href={`/sales/${node.id}`}>{node.id}</TdLink>
-                          <TdLink href={`/sales/${node.id}`}>
-                            {new Intl.NumberFormat("id", {
-                              style: "currency",
-                              currency: "IDR",
-                              minimumFractionDigits: 0,
-                            }).format(node.total)}
-                          </TdLink>
-                          <TdLink href={`/sales/${node.id}`}>
+          data.pages.map((page, index) => (
+            <Grid
+              templateColumns="repeat(auto-fit, minmax(325px, 1fr))"
+              gap="2"
+              key={index}
+              pb={!isSm && "14"}
+            >
+              {page.edges.length
+                ? page.edges.map(({ node }) => (
+                    <LinkBox key={node.id}>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        borderWidth="thin"
+                        p="4"
+                      >
+                        <Box>
+                          <Heading size="md">
+                            <NextLink href={`/sales/${node.id}`} passHref>
+                              <LinkOverlay>#{node.id}</LinkOverlay>
+                            </NextLink>
+                          </Heading>
+                          <Text
+                            fontSize="sm"
+                            color="gray.500"
+                            fontWeight="medium"
+                          >
                             {dayjs(Number(node.createdAt)).format(
-                              "DD MMMM YYYY HH:mm:ss"
+                              "DD MMMM YYYY HH:mm"
                             )}
-                          </TdLink>
-                          <TdLink href={`/sales/${node.id}`}>
-                            {dayjs(Number(node.updatedAt)).format(
-                              "DD MMMM YYYY HH:mm:ss"
-                            )}
-                          </TdLink>
-                        </Tr>
-                      ))
-                    ) : (
-                      <Tr>
-                        <Td colSpan="4" textAlign="center">
-                          Tidak ada data
-                        </Td>
-                      </Tr>
-                    )}
-                  </Fragment>
-                ))}
-              </Tbody>
-            </Table>
-          </Box>
+                          </Text>
+                        </Box>
+                        <Heading size="md">
+                          {new Intl.NumberFormat("id", {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0,
+                          }).format(node.total)}
+                        </Heading>
+                      </Flex>
+                    </LinkBox>
+                  ))
+                : "tidak ada data"}
+            </Grid>
+          ))
         )}
         {isFetchingNextPage && (
           <Center mt="4">
