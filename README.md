@@ -3,9 +3,9 @@
 
 Simple POS application
 
-## Tech Stack
+## Technologies
 
-**Client:** Next.js, Chakra UI, React Query, React Hook Form
+**Client:** Next.js, Chakra UI, React Query, graphql-request
 
 **Server:** Node.js, MySQL, Mercurius, Redis, Prisma
 
